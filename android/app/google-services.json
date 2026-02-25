@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "247737032867",
+    "project_id": "tesis-app-log",
+    "storage_bucket": "tesis-app-log.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247737032867:android:a55ceb9c248a0e33021f16",
+        "android_client_info": {
+          "package_name": "com.example.app_logic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247737032867-dai4eu35ih8b03vqqg43175g9hm63n9b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_logic",
+            "certificate_hash": "7d5c9dc1b09fd953c33a3d312b5992362dd3d369"
+          }
+        },
+        {
+          "client_id": "247737032867-sscao453eefq1ftv67b3kq9ng0b32oa8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6lBPujz8yoIsU3noDrYpt2waxbkFAyUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247737032867-29mp7591lqrbo6jjpoqifh7mh490nbhu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "247737032867-4rsekav3cnp5etd4h34o0khfe510sabv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appLogic"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247737032867:android:bce1af535980f611021f16",
+        "android_client_info": {
+          "package_name": "com.example.appp_logic_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247737032867-sscao453eefq1ftv67b3kq9ng0b32oa8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6lBPujz8yoIsU3noDrYpt2waxbkFAyUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247737032867-29mp7591lqrbo6jjpoqifh7mh490nbhu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "247737032867-4rsekav3cnp5etd4h34o0khfe510sabv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appLogic"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
