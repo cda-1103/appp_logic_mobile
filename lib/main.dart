@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 // Importaciones de las vistas y viewmodels
 import 'ui/viewmodels/auth_viewmodel.dart';
@@ -13,6 +14,9 @@ import 'ui/views/login_screen.dart';
 import 'ui/viewmodels/level_viewmodel.dart';
  void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Carga las variables de entorno
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());

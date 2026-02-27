@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:google_generative_ai/google_generative_ai.dart';
-// IMPORTANTE: Asegúrate de que la ruta a tu modelo sea correcta
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../data/models/level_model.dart'; 
 
 class AiMentorService {
   // ATENCIÓN: Asegúrate de poner tu API Key real aquí.
-  static const String _apiKey = 'AIzaSyCB4TEyO4jwvL27BpWqe8NfLjJL5SLhdJA'; 
+  static final String _apiKey = dotenv.env['GEMINI_API_KEY'] ?? ''; 
   late final GenerativeModel _model;
   late final GenerativeModel _jsonModel;
 
