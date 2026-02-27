@@ -14,6 +14,7 @@ class GameScreen extends StatelessWidget {
     final neonGreen = const Color(0xFF00FF00);
     final neonRed = const Color(0xFFFF3131);
     final darkBg = const Color(0xFF0D1117);
+    final aiColor = const Color(0xFF9C27B0); // Morado neón para la IA
 
     // 1. LOADING STATE
     if (challenge == null) {
@@ -22,6 +23,8 @@ class GameScreen extends StatelessWidget {
         body: Center(child: CircularProgressIndicator(color: neonGreen)),
       );
     }
+
+    final options = gameVM.currentShuffledOptions;
 
     return Scaffold(
       backgroundColor: darkBg,
@@ -112,21 +115,25 @@ class GameScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
                   ],
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: challenge.options.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      return _buildOptionCard(
-                        index,
-                        gameVM,
-                        challenge.options[index],
-                        neonGreen,
-                        neonRed,
-                      );
-                    },
-                  ),
+                  
+                  if (challenge.isFillInTheBlank)
+                    _buildTextFieldInput(context, gameVM, neonGreen, neonRed)
+                  else
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: options.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        return _buildOptionCard(
+                          index,
+                          gameVM,
+                          options[index],
+                          neonGreen,
+                          neonRed,
+                        );
+                      },
+                    ),
                 ],
               ),
             ),
@@ -139,9 +146,11 @@ class GameScreen extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: gameVM.selectedOptionIndex == null
+                  onPressed: (challenge.isFillInTheBlank && gameVM.userInputText.trim().isEmpty) || 
+                             (!challenge.isFillInTheBlank && gameVM.selectedOptionIndex == null)
                       ? null
                       : () {
+                          FocusScope.of(context).unfocus(); 
                           gameVM.checkAnswer();
                           if (gameVM.currentLives <= 0) {
                             _showGameOverDialog(context);
@@ -199,6 +208,8 @@ class GameScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
+                  
+                  // Explicación estática del JSON
                   if (challenge.explanation.isNotEmpty)
                     Text(
                       challenge.explanation,
@@ -207,7 +218,80 @@ class GameScreen extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                  const SizedBox(height: 20),
+                    
+                  if (!gameVM.isCorrect && challenge.isFillInTheBlank && challenge.expectedTextAnswer != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      "Respuesta esperada: ${challenge.expectedTextAnswer}",
+                      style: TextStyle(
+                        color: neonGreen,
+                        fontFamily: 'Courier',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+
+                  // ------------------------------------------------------------------
+                  // ---> SECCIÓN DE INTELIGENCIA ARTIFICIAL (MENTOR BOT) <---
+                  // ------------------------------------------------------------------
+                  if (!gameVM.isCorrect) ...[
+                    const SizedBox(height: 20),
+                    // Si ya hay una pista cargada, la mostramos
+                    if (gameVM.currentHint != null)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: aiColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: aiColor.withOpacity(0.5)),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.psychology, color: aiColor, size: 28),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                gameVM.currentHint!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    // Si no hay pista y no está cargando, mostramos el botón para pedirla
+                    else if (!gameVM.isLoadingHint)
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () => gameVM.askForHint(),
+                          icon: Icon(Icons.auto_awesome, color: aiColor),
+                          label: Text(
+                            "PEDIR PISTA AL MENTOR IA",
+                            style: TextStyle(color: aiColor, fontWeight: FontWeight.bold),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: aiColor),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      )
+                    // Si está cargando, mostramos el indicador
+                    else
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(color: aiColor),
+                        ),
+                      ),
+                  ],
+                  // ------------------------------------------------------------------
+
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -217,8 +301,6 @@ class GameScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       onPressed: () {
-                        // --- 1. CORRECCIÓN DE LOGICA AQUÍ ---
-                        // Verificamos si es la ÚLTIMA pregunta (índice == total - 1)
                         bool isLastQuestion =
                             gameVM.currentQuestionIndex >=
                             gameVM.totalQuestions - 1;
@@ -226,12 +308,10 @@ class GameScreen extends StatelessWidget {
                         if (!isLastQuestion) {
                           gameVM.nextQuestion();
                         } else {
-                          // Si es la última, terminamos el nivel
                           _handleLevelFinish(context, gameVM);
                         }
                       },
                       child: Text(
-                        // Cambiamos el texto dinámicamente
                         (gameVM.currentQuestionIndex >=
                                 gameVM.totalQuestions - 1)
                             ? "TERMINAR NIVEL >"
@@ -251,6 +331,41 @@ class GameScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildTextFieldInput(BuildContext context, GameViewModel gameVM, Color green, Color red) {
+    Color borderColor = Colors.blueAccent;
+    if (gameVM.isChecked) {
+      borderColor = gameVM.isCorrect ? green : red;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF161B22),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor, width: gameVM.isChecked ? 2 : 1),
+      ),
+      child: TextField(
+        controller: gameVM.textController,
+        enabled: !gameVM.isChecked, 
+        autofocus: true, 
+        style: const TextStyle(color: Colors.white, fontFamily: 'Courier', fontSize: 16),
+        cursorColor: green,
+        onChanged: (text) => gameVM.updateUserInput(text),
+        decoration: InputDecoration(
+          hintText: "Escribe tu código aquí...",
+          hintStyle: TextStyle(color: Colors.white38, fontFamily: 'Courier'),
+          contentPadding: const EdgeInsets.all(16),
+          border: InputBorder.none,
+          suffixIcon: gameVM.isChecked
+              ? Icon(
+                  gameVM.isCorrect ? Icons.check : Icons.close,
+                  color: borderColor,
+                )
+              : const Icon(Icons.keyboard, color: Colors.blueAccent),
+        ),
+      ),
+    );
+  }
+
   Widget _buildOptionCard(
     int index,
     GameViewModel gameVM,
@@ -263,7 +378,12 @@ class GameScreen extends StatelessWidget {
     Color bgColor = const Color(0xFF161B22);
 
     if (gameVM.isChecked) {
-      if (gameVM.currentChallenge!.correctOptionIndex == index) {
+      final challenge = gameVM.currentChallenge!;
+      final correctText = challenge.options[challenge.correctOptionIndex];
+      
+      bool isThisCardTheCorrectOne = (text == correctText);
+
+      if (isThisCardTheCorrectOne) {
         borderColor = green;
         bgColor = green.withOpacity(0.1);
       } else if (isSelected && !gameVM.isCorrect) {
@@ -331,7 +451,6 @@ class GameScreen extends StatelessWidget {
   void _handleLevelFinish(BuildContext context, GameViewModel gameVM) async {
     final authVM = Provider.of<AuthViewModel>(context, listen: false);
 
-    // Mostramos feedback visual de carga si quieres, o confiamos en el await
     bool passed = await gameVM.finishLevel();
     await authVM.reloadUser();
 
@@ -375,9 +494,6 @@ class GameScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              // --- 2. CORRECCIÓN DE NAVEGACIÓN ---
-              // Volvemos hasta la pantalla principal (Dashboard)
-              // Esto cierra el Dialog, el GameScreen y el LevelIntroScreen de un golpe.
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
             child: const Text(
@@ -408,7 +524,6 @@ class GameScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              // Si pierdes, vuelves a la Intro del nivel (pop 2 veces: Dialog + Game)
               Navigator.pop(context);
               Navigator.pop(context);
             },

@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 import '../../data/models/level_model.dart';
 import '../../data/repositories/level_repository.dart';
 import '../viewmodels/auth_viewmodel.dart';
+import '../viewmodels/game_viewmodel.dart'; // Añadido para poder jugar el reto IA
+import '../../core/services/ai_mentor_service.dart'; // Añadido para llamar a Gemini
 import 'level_intro_screen.dart';
+import 'game_screen.dart'; // Añadido para navegar al juego directamente
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,6 +17,10 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late Future<List<LevelModel>> _levelsFuture;
+  
+  // --- VARIABLES PARA LA IA ---
+  final TextEditingController _topicController = TextEditingController();
+  final AiMentorService _aiService = AiMentorService();
 
   @override
   void initState() {
@@ -21,6 +28,154 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final levelRepo = Provider.of<LevelRepository>(context, listen: false);
     _levelsFuture = levelRepo.getLevels();
   }
+
+  @override
+  void dispose() {
+    _topicController.dispose();
+    super.dispose();
+  }
+
+  // ----------------------------------------------------------------------
+  // ---> MÉTODOS DE INTELIGENCIA ARTIFICIAL <---
+  // ----------------------------------------------------------------------
+
+  void _showAiGeneratorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF161B22),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFF9C27B0)), // Morado IA
+          ),
+          title: Row(
+            children: const [
+              Icon(Icons.auto_awesome, color: Color(0xFF9C27B0)),
+              SizedBox(width: 8),
+              Text(
+                "FORJA TU RETO",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Courier',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Escribe el tema de programación que quieres practicar y el Mentor IA creará un desafío único para ti.",
+                style: TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _topicController,
+                style: const TextStyle(color: Colors.white, fontFamily: 'Courier'),
+                cursorColor: const Color(0xFF9C27B0),
+                decoration: InputDecoration(
+                  hintText: "Ej. Bucles For, Variables...",
+                  hintStyle: const TextStyle(color: Colors.white38),
+                  filled: true,
+                  fillColor: Colors.black26,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF9C27B0)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text("CANCELAR", style: TextStyle(color: Colors.white54)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF9C27B0),
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                final topic = _topicController.text.trim();
+                if (topic.isNotEmpty) {
+                  Navigator.pop(dialogContext); 
+                  _generateAndPlayLevel(context, topic); 
+                }
+              },
+              child: const Text("GENERAR", style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _generateAndPlayLevel(BuildContext context, String topic) async {
+    // 1. Mostrar diálogo de carga "Invocando al Mentor..."
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AlertDialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        content: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: Color(0xFF9C27B0)),
+              SizedBox(height: 16),
+              Text(
+                "El Mentor está forjando el reto...",
+                style: TextStyle(color: Colors.white, fontFamily: 'Courier'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // 2. Pedirle el reto a la IA
+    final reto = await _aiService.generateRandomChallenge(topic);
+
+    // 3. Quitar el diálogo de carga
+    if (!context.mounted) return;
+    Navigator.pop(context);
+
+    // 4. Evaluar resultado y navegar
+    if (reto != null) {
+      _topicController.clear(); // Limpiamos para el futuro
+      
+      // Cargamos el reto en el ViewModel general
+      final gameVM = Provider.of<GameViewModel>(context, listen: false);
+      gameVM.loadAiGeneratedLevel(reto);
+      
+      // Viajamos directo al juego
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const GameScreen()),
+      );
+    } else {
+      // Mostrar error de red
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("El Mentor no pudo forjar el reto. Intenta de nuevo.", style: TextStyle(fontFamily: 'Courier')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // ----------------------------------------------------------------------
+  // ---> CONSTRUCCIÓN DE LA PANTALLA PRINCIPAL <---
+  // ----------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +203,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      // --- CAMBIO PRINCIPAL AQUÍ ---
-      // Usamos una Column para poner el Header arriba y la lista abajo
       body: Column(
         children: [
-          // 1. EL ENCABEZADO DE USUARIO (Estilo de la foto)
+          // 1. EL ENCABEZADO DE USUARIO
           _buildUserHeader(user, neonGreen),
 
           // 2. LA LISTA DE NIVELES (Dentro de Expanded para ocupar el resto)
@@ -104,10 +257,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
+      // --- NUEVO: BOTÓN FLOTANTE MÁGICO DE IA ---
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xFF9C27B0), // Morado IA
+        icon: const Icon(Icons.auto_awesome, color: Colors.white),
+        label: const Text(
+          "RETO IA",
+          style: TextStyle(
+            color: Colors.white, 
+            fontWeight: FontWeight.bold, 
+            fontFamily: 'Courier',
+            letterSpacing: 1.5,
+          ),
+        ),
+        onPressed: () => _showAiGeneratorDialog(context),
+      ),
     );
   }
 
-  // --- WIDGET NUEVO: ENCABEZADO DE USUARIO ---
+  // --- WIDGET ENCABEZADO DE USUARIO ---
   Widget _buildUserHeader(dynamic user, Color neonGreen) {
     if (user == null) return const SizedBox.shrink();
 
@@ -129,8 +297,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user.rankTitle ??
-                      "Aprendiz Junior", // Rango (si es null usa default)
+                  user.rankTitle ?? "Aprendiz Junior",
                   style: TextStyle(
                     color: Colors.grey[400],
                     fontSize: 12,
@@ -150,17 +317,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
 
-          // C. Píldora de XP (Estilo de la foto)
+          // C. Píldora de XP
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF1F2937), // Fondo gris oscuro
+              color: const Color(0xFF1F2937), 
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: neonGreen.withOpacity(0.3)),
             ),
             child: Row(
               children: [
-                Icon(Icons.bolt, color: neonGreen, size: 16), // Rayito
+                Icon(Icons.bolt, color: neonGreen, size: 16), 
                 const SizedBox(width: 4),
                 Text(
                   "${user.totalScore} XP",
@@ -178,7 +345,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // --- WIDGET TARJETA DE NIVEL (Igual que antes) ---
+  // --- WIDGET TARJETA DE NIVEL ---
   Widget _buildLevelCard(
     BuildContext context,
     LevelModel level,

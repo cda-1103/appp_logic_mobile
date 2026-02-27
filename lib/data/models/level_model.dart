@@ -7,6 +7,7 @@ class Challenge {
   final List<String> options;
   final int correctOptionIndex;
   final String explanation;
+  final String? expectedTextAnswer ;
 
   Challenge({
     required this.question,
@@ -14,7 +15,10 @@ class Challenge {
     required this.options,
     required this.correctOptionIndex,
     required this.explanation,
+    this.expectedTextAnswer,
   });
+
+  bool get isFillInTheBlank => options.isEmpty;
 
   factory Challenge.fromMap(Map<String, dynamic> map) {
     return Challenge(
@@ -23,6 +27,7 @@ class Challenge {
       options: List<String>.from(map['options'] ?? []),
       correctOptionIndex: map['correct_index'] ?? 0,
       explanation: map['explanation'] ?? '',
+      expectedTextAnswer: map['expected_text'],
     );
   }
 }

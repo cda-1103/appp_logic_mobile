@@ -5,10 +5,11 @@
             "title": "SECUENCIA LÓGICA",
             "subtitle": "La Máquina de Café",
             "difficulty": 1,
+            "order_index": 0,
             "icon_name": "local_cafe",
             "color_hex": "0xFF795548",
             "description": "En programación, el orden de ejecución es absoluto. El procesador lee las instrucciones línea por línea, de arriba a abajo. Alterar este orden cambia drásticamente el resultado final o rompe el programa.",
-            "analogy": "Imagina vestirte por la mañana. Tienes ropa interior y pantalones. El algoritmo para vestirse exige un orden estricto: primero la ropa interior, luego los pantalones. Si inviertes el orden (pantalones primero), aunque uses las mismas prendas, el resultado es funcionalmente incorrecto y socialmente extraño.",
+            "analogy": "Imagina vestirte por la mañana. Tienes ropa interior y pantalones. El algoritmo para vestirse exige un orden estricto: primero la ropa interior, luego los pantalones. Si inviertes el orden, el resultado es funcionalmente incorrecto.",
             "challenges": [
                 {
                     "question": "Quieres hacer café en una máquina eléctrica. ¿Cuál es el orden lógico físico obligatorio?",
@@ -19,434 +20,146 @@
                         "Encender -> Servir en taza -> Poner Agua"
                     ],
                     "correct_index": 1,
-                    "explanation": "La inicialización de recursos (agua y café) debe ocurrir antes de ejecutar el proceso principal (encender/calentar). De lo contrario, la máquina puede quemarse."
+                    "explanation": "La inicialización de recursos (agua y café) debe ocurrir antes de ejecutar el proceso principal (encender/calentar). De lo contrario, la máquina operaría en vacío."
                 },
                 {
-                    "question": "Vas a retirar dinero del Cajero Automático. Pasos: Tarjeta, PIN, Monto, Dinero. ¿Qué pasa si intentas pedir el Monto antes de ingresar el PIN?",
-                    "code_snippet": "1. Insertar Tarjeta\n2. Solicitar Monto\n3. Ingresar PIN",
-                    "options": [
-                        "El cajero te da el dinero igual",
-                        "El sistema te bloquea o pide el PIN primero",
-                        "Te cobra comisión"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Los sistemas seguros tienen dependencias secuenciales. La autenticación (PIN) es un prerequisito bloqueante para la transacción (Monto)."
-                },
-                {
-                    "question": "Pisas el freno del coche a fondo, pero el coche NO se detiene. ¿Cuál es la causa lógica inmediata?",
+                    "question": "Tienes los pasos: A(Hervir agua), B(Servir en taza), C(Poner bolsita de té). ¿Cuál es el orden correcto?",
                     "code_snippet": "",
                     "options": [
-                        "Se acabó la gasolina",
-                        "El sistema de frenos falló (Causa -> Efecto roto)",
-                        "La carretera está seca"
+                        "A -> C -> B",
+                        "C -> A -> B",
+                        "B -> C -> A"
                     ],
-                    "correct_index": 1,
-                    "explanation": "Es una ruptura en la lógica de Causa y Efecto. Si la entrada (Input: pisar pedal) no genera la salida esperada (Output: frenar), el mecanismo interno está defectuoso."
+                    "correct_index": 0,
+                    "explanation": "Dependencia lógica: No puedes servir (B) hasta que el té esté listo (C), y no puedes hacer té sin agua hirviendo (A)."
+                },
+                {
+                    "question": "Escribe la palabra clave (keyword) universal en programación para MOSTRAR o IMPRIMIR un mensaje en la pantalla.",
+                    "code_snippet": "____(\"¡El café está listo!\");",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "print",
+                    "explanation": "La instrucción 'print' es la salida estándar más básica para mostrar información al usuario o hacer debug."
                 }
             ]
         },
         {
-            "id": "lvl_02_conditional",
-            "title": "CONDICIONALES",
-            "subtitle": "El Club Exclusivo",
+            "id": "lvl_02_variables",
+            "title": "MEMORIA Y VARIABLES",
+            "subtitle": "Cajas Etiquetadas",
             "difficulty": 1,
-            "icon_name": "security",
-            "color_hex": "0xFFD32F2F",
-            "description": "Las estructuras de control condicionales (If/Else) permiten que el programa tome decisiones. Evalúan si una pregunta es Verdadera o Falsa y eligen un camino diferente para cada respuesta.",
-            "analogy": "Piensa en un portero de discoteca. Tiene una regla simple: 'Si tu edad es mayor o igual a 18, pasas. Si no, te quedas fuera'. No hay términos medios, no hay 'casi'. La lógica computacional es binaria: cumples la condición o no la cumples.",
+            "order_index": 1,
+            "icon_name": "inventory_2",
+            "color_hex": "0xFF2196F3",
+            "description": "Los programas necesitan recordar cosas. Una variable es como una caja en la memoria de la computadora donde guardamos un dato y le ponemos una etiqueta (nombre) para encontrarlo después.",
+            "analogy": "Imagina una mudanza. Tienes una caja marcada como 'Libros'. Dentro hay libros. La caja es la variable, 'Libros' es el nombre, y los libros reales son el valor (dato).",
             "challenges": [
                 {
-                    "question": "Regla del Bar: 'Entrada gratis SI es antes de las 11:00 PM'. Llegas a las 11:05 PM. ¿Pagas?",
-                    "code_snippet": "if (hora_llegada < 23:00) {\n  precio = 0;\n} else {\n  precio = 20;\n}",
+                    "question": "Quieres guardar la edad de un usuario (ej. 25). ¿Qué tipo de caja (variable) es la más adecuada?",
+                    "code_snippet": "_____ edad = 25;",
                     "options": [
-                        "No, son solo 5 minutos de retraso",
-                        "Sí, la condición es estricta",
-                        "Pagas la mitad"
+                        "Texto (String)",
+                        "Número entero (int)",
+                        "Verdadero/Falso (bool)"
                     ],
                     "correct_index": 1,
-                    "explanation": "Para una computadora, 23:05 es mayor que 23:00. La condición `hora < 23:00` evalúa a FALSO, ejecutando el bloque `else` (pagar)."
+                    "explanation": "La edad es un número entero sin decimales, por lo que el tipo 'int' (integer) es el correcto."
                 },
                 {
-                    "question": "Trámite: SI traes foto actual -> Aceptado. SI NO -> Pagar $5 por foto. No traes foto.",
-                    "code_snippet": "",
-                    "options": [
-                        "Te vas a casa",
-                        "Pagas $5 extra y sigues el trámite",
-                        "El trámite es gratis"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Es el flujo alternativo (ELSE). El proceso no se detiene por fallar la condición principal, simplemente toma una ruta alternativa para solucionar el problema."
+                    "question": "Escribe el tipo de dato que usarías para guardar un nombre como 'Claudio'.",
+                    "code_snippet": "______ nombre = 'Claudio';",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "String",
+                    "explanation": "Un 'String' es una cadena de caracteres, es decir, texto. Siempre va entre comillas."
                 },
                 {
-                    "question": "Debes tener ID (+18). SI tienes ID -> ¿Está vigente? -> Si No -> Venta Denegada. Tienes 20 años, tienes tu ID, pero venció ayer.",
-                    "code_snippet": "if (edad > 18) {\n  if (vigente == false) return DENEGADO;\n}",
-                    "options": [
-                        "Venta Aprobada",
-                        "Venta Denegada",
-                        "Depende del vendedor"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Esto es una condición anidada. Superaste el primer filtro (Edad), pero fallaste el segundo filtro interno (Vigencia)."
+                    "question": "Declara una variable que NUNCA va a cambiar su valor (ej. el número Pi = 3.14). ¿Qué palabra clave usas al inicio?",
+                    "code_snippet": "_____ pi = 3.14;",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "const",
+                    "explanation": "La palabra clave 'const' (o final) se usa para valores constantes en memoria que son inmutables tras su asignación."
                 }
             ]
         },
         {
-            "id": "lvl_03_loops",
-            "title": "BUCLES Y CICLOS",
-            "subtitle": "La Pila de Platos",
+            "id": "lvl_03_logic",
+            "title": "CONDICIONALES",
+            "subtitle": "Bifurcaciones",
             "difficulty": 2,
+            "order_index": 2,
+            "icon_name": "call_split",
+            "color_hex": "0xFFFF9800",
+            "description": "Los programas toman decisiones evaluando condiciones. Si la condición es verdadera (true), hacen una cosa. Si es falsa (false), pueden hacer otra.",
+            "analogy": "Es como llegar a un semáforo. SI (if) está en verde, avanzas. SINO (else), te detienes.",
+            "challenges": [
+                {
+                    "question": "Completa la estructura condicional básica. Si llueve, llevo paraguas.",
+                    "code_snippet": "___ (llueve == true) {\n  llevarParaguas();\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "if",
+                    "explanation": "La instrucción 'if' evalúa la condición entre paréntesis."
+                },
+                {
+                    "question": "¿Qué palabra se usa para indicar \"EN CASO CONTRARIO\" a la condición del IF?",
+                    "code_snippet": "if (hambre == true) {\n  comer();\n} ____ {\n  seguirTrabajando();\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "else",
+                    "explanation": "El 'else' es la ruta de escape o bifurcación por defecto cuando la condición del 'if' no se cumple."
+                },
+                {
+                    "question": "Tienes que ser mayor de 18 Y tener licencia para conducir. ¿Qué operador lógico usas para el 'Y' (AND)?",
+                    "code_snippet": "if (edad >= 18 __ tieneLicencia) {\n  conducir();\n}",
+                    "options": [
+                        "|| (Dos barras)",
+                        "&& (Dos ampersands)",
+                        "== (Doble igual)"
+                    ],
+                    "correct_index": 1,
+                    "explanation": "El operador '&&' requiere que AMBAS condiciones sean verdaderas simultáneamente."
+                }
+            ]
+        },
+        {
+            "id": "lvl_04_loops",
+            "title": "CICLOS REPETITIVOS",
+            "subtitle": "La Rueda del Hámster",
+            "difficulty": 3,
+            "order_index": 3,
             "icon_name": "loop",
-            "color_hex": "0xFF1976D2",
-            "description": "Los bucles permiten repetir una acción múltiples veces sin escribir el mismo código una y otra vez. Son esenciales para procesar listas de datos o realizar tareas repetitivas hasta que algo cambie.",
-            "analogy": "Imagina lavar una pila de platos sucios. No piensas 'lavar plato 1, lavar plato 2, lavar plato 3'. Tu cerebro usa un bucle 'Mientras (While)': 'Mientras queden platos sucios en la pila, toma uno, lávalo y repite'. El ciclo termina solo cuando la condición 'hay platos sucios' se vuelve falsa.",
-            "challenges": [
-                {
-                    "question": "Tienes una pila de platos sucios. ¿Cuál es el algoritmo más eficiente?",
-                    "code_snippet": "",
-                    "options": [
-                        "Escribir una instrucción por cada plato",
-                        "MIENTRAS haya platos -> Lavar siguiente",
-                        "Lavar durante 10 minutos exactos"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Usamos un bucle 'While' porque no sabemos el número exacto de platos, pero sabemos la condición de parada (pila vacía)."
-                },
-                {
-                    "question": "El médico te receta: 'Tomar 1 pastilla cada 8 horas por 5 días'. ¿Cuántas veces se repite la acción?",
-                    "code_snippet": "for (dia = 1; dia <= 5; dia++) {\n  tomar_3_veces();\n}",
-                    "options": [
-                        "5 veces",
-                        "8 veces",
-                        "15 veces"
-                    ],
-                    "correct_index": 2,
-                    "explanation": "Es un bucle determinado (For). 3 tomas al día multiplicadas por 5 días resultan en 15 iteraciones totales del ciclo."
-                },
-                {
-                    "question": "Instrucciones de champú: 'Enjabone, Enjuague, Repita'. ¿Cuál es el error lógico aquí?",
-                    "code_snippet": "funcion lavar() {\n  enjabonar();\n  enjuagar();\n  lavar(); // Se llama a sí misma\n}",
-                    "options": [
-                        "No dice qué champú usar",
-                        "Es un bucle infinito (nunca para)",
-                        "Gasta poca agua"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Falta una 'Condición de Salida'. Si no dices 'Repetir solo si sigue sucio', el usuario se quedaría lavando el pelo eternamente (Infinite Loop)."
-                }
-            ]
-        },
-        {
-            "id": "lvl_04_boolean",
-            "title": "LÓGICA BOOLEANA",
-            "subtitle": "El Trámite de Visa",
-            "difficulty": 2,
-            "icon_name": "fact_check",
-            "color_hex": "0xFF009688",
-            "description": "La lógica booleana combina múltiples condiciones usando operadores como Y (AND), O (OR) y NO (NOT) para crear filtros complejos.",
-            "analogy": "Imagina una puerta con dos cerraduras. El operador AND significa que necesitas la llave de arriba Y la llave de abajo para abrir. El operador OR significa que la puerta abre si usas la llave maestra O si usas la tarjeta de acceso. El operador NOT es como un letrero que dice 'Solo personal NO autorizado'.",
-            "challenges": [
-                {
-                    "question": "Requisitos para Visa: Pasaporte Vigente Y (AND) Boleto de Avión. Tienes el boleto, pero tu pasaporte caducó.",
-                    "code_snippet": "if (pasaporte && boleto) {\n  viajar();\n}",
-                    "options": [
-                        "Te dejan pasar",
-                        "No viajas",
-                        "Viajas solo de ida"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "El operador AND (&&) es estricto: requiere que TODAS las condiciones sean verdaderas. Si una es falsa, todo el resultado es falso."
-                },
-                {
-                    "question": "Descuento en Cine: 'Estudiantes O (OR) Jubilados'. No eres jubilado, pero tienes carnet de estudiante.",
-                    "code_snippet": "if (es_estudiante || es_jubilado) {\n  aplicar_descuento();\n}",
-                    "options": [
-                        "Recibes el descuento",
-                        "Pagas completo",
-                        "Necesitas ser estudiante jubilado"
-                    ],
-                    "correct_index": 0,
-                    "explanation": "El operador OR (||) es inclusivo. Basta con cumplir AL MENOS UNA de las condiciones para que el resultado sea verdadero."
-                },
-                {
-                    "question": "Seguro de Auto: Cubre accidentes SIEMPRE QUE el conductor NO (NOT) esté ebrio. Tuviste un accidente y estabas ebrio.",
-                    "code_snippet": "if (!conductor_ebrio) {\n  pagar_seguro();\n}",
-                    "options": [
-                        "El seguro paga",
-                        "El seguro NO paga",
-                        "Pagan la mitad"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "El operador NOT (!) invierte el valor. Si 'estar ebrio' es VERDADERO, entonces 'NO estar ebrio' se convierte en FALSO, invalidando el seguro."
-                }
-            ]
-        },
-        {
-            "id": "lvl_05_variables",
-            "title": "VARIABLES Y ESTADO",
-            "subtitle": "El Carrito de Compras",
-            "difficulty": 2,
-            "icon_name": "shopping_cart",
-            "color_hex": "0xFF43A047",
-            "description": "Las variables son contenedores etiquetados que guardan información que puede cambiar durante la vida del programa. Sin variables, un programa no tendría 'memoria'.",
-            "analogy": "Tu cuenta bancaria es una variable. Tiene un nombre ('Saldo') y un valor (ej. $100). Cuando compras algo, no cambias de cuenta bancaria, sino que actualizas el valor dentro de esa variable. Si depositas dinero, el valor aumenta; si gastas, disminuye.",
-            "challenges": [
-                {
-                    "question": "Presupuesto = $50. Agregas camisa ($20). Agregas pantalón ($40). ¿Qué pasa con la variable Presupuesto?",
-                    "code_snippet": "int presupuesto = 50;\npresupuesto = presupuesto - 20 - 40;",
-                    "options": [
-                        "Queda en $10",
-                        "Error / Saldo Negativo",
-                        "Queda en $0"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "50 - 20 - 40 = -10. Las variables numéricas almacenan el resultado matemático exacto. En una app real, esto requeriría una validación previa para evitar errores."
-                },
-                {
-                    "question": "Llenando un formulario. Campo 'Apellido'. Escribes '12345'. ¿Qué dirá el sistema bien programado?",
-                    "code_snippet": "String apellido = \"12345\";\nvalidar_texto(apellido);",
-                    "options": [
-                        "Guardado exitoso",
-                        "Error: Tipo de dato inválido",
-                        "Lo guarda como número"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Las variables tienen 'Tipos'. Una variable diseñada para guardar Texto (String) como un apellido no debería aceptar Números lógicos sin una advertencia."
-                },
-                {
-                    "question": "Marcador = 0. Gol (+1). VAR anula Gol (-1). ¿Valor final?",
-                    "code_snippet": "marcador = 0;\nmarcador = marcador + 1;\nmarcador = marcador - 1;",
-                    "options": [
-                        "1",
-                        "0",
-                        "-1"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Las variables mantienen su estado. Las operaciones se aplican secuencialmente sobre el último valor conocido."
-                }
-            ]
-        },
-        {
-            "id": "lvl_06_debug",
-            "title": "DEPURACIÓN (DEBUGGING)",
-            "subtitle": "El Pastel Fallido",
-            "difficulty": 3,
-            "icon_name": "pest_control",
-            "color_hex": "0xFFFF5722",
-            "description": "El debugging es el arte de encontrar por qué un código no hace lo que se espera. Requiere pensar hacia atrás desde el error hasta la causa.",
-            "analogy": "Eres un detective en la escena de un crimen (el error). Sabes que el pastel se quemó (la evidencia). Debes interrogar a los sospechosos (el código): ¿Fue la temperatura? ¿Fue el tiempo? ¿Fue el ingrediente incorrecto? Debuggear es descartar culpables hasta encontrar el error lógico.",
-            "challenges": [
-                {
-                    "question": "Hiciste un pastel y quedó duro como piedra. Pasos: Harina, Huevos, Horno, Polvo de Hornear. ¿Dónde está el bug?",
-                    "code_snippet": "1. Mezclar Harina y Huevos\n2. Hornear()\n3. Agregar Polvo de Hornear",
-                    "options": [
-                        "El horno estaba muy caliente",
-                        "Agregaste el Polvo DESPUÉS del horno",
-                        "Los huevos estaban caducados"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Bug de Secuencia. Un ingrediente químico reactivo (levadura/polvo) debe integrarse ANTES de la cocción para que funcione."
-                },
-                {
-                    "question": "La lámpara no prende. Cambiaste el foco. Sigue sin prender. Fusibles bien. ¿Qué olvidaste?",
-                    "code_snippet": "",
-                    "options": [
-                        "Si es de día",
-                        "Verificar si está enchufada",
-                        "Si la pared es blanca"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "A veces buscamos errores complejos en el código y olvidamos verificar las condiciones iniciales más básicas (conexión/alimentación)."
-                },
-                {
-                    "question": "GPS dice: 'Gire a la derecha en el río'. No hay puente. El coche cae al agua. ¿De quién es la culpa lógica?",
-                    "code_snippet": "instruccion = \"Girar Derecha\";\nejecutar(instruccion); // Sin verificar peligro",
-                    "options": [
-                        "Fallo del Conductor (Usuario) por no validar",
-                        "Fallo del GPS (Datos)",
-                        "Ambos"
-                    ],
-                    "correct_index": 0,
-                    "explanation": "En sistemas críticos, el operador final (o una función de validación de seguridad) debe tener la capacidad de anular una instrucción si detecta una excepción fatal."
-                }
-            ]
-        },
-        {
-            "id": "lvl_07_optimization",
-            "title": "OPTIMIZACIÓN",
-            "subtitle": "La Ruta del Ascensor",
-            "difficulty": 3,
-            "icon_name": "trending_up",
-            "color_hex": "0xFF3F51B5",
-            "description": "La optimización busca lograr el mismo resultado usando menos recursos (tiempo, memoria, energía).",
-            "analogy": "Imagina que eres un repartidor. Puedes entregar un paquete, volver al almacén, recoger otro, y volver a salir. O puedes cargar tu camión con 50 paquetes y hacer una ruta circular inteligente. Ambos métodos entregan los paquetes, pero uno gasta 10 veces menos gasolina y tiempo.",
-            "challenges": [
-                {
-                    "question": "Estás en planta baja (0). Destinos: Piso 2, Piso 5, Piso 1. ¿Ruta óptima del ascensor?",
-                    "code_snippet": "",
-                    "options": [
-                        "0 -> 5 -> 2 -> 1",
-                        "0 -> 2 -> 5 -> 1",
-                        "0 -> 1 -> 2 -> 5"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Aprovechar la inercia. Subir recogiendo pasajeros en orden (0, 2, 5) y bajar directo al destino final es más eficiente que subir y bajar erráticamente."
-                },
-                {
-                    "question": "Enviar 100 emails idénticos. ¿Método óptimo?",
-                    "code_snippet": "",
-                    "options": [
-                        "Escribir uno por uno",
-                        "Usar una lista de correos (Batch Processing)",
-                        "Llamar por teléfono"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Procesamiento por lotes (Batch). Realizar la acción una sola vez y aplicarla a un grupo de datos es computacionalmente más barato que repetir el proceso 100 veces."
-                },
-                {
-                    "question": "Siempre usas llaves y cartera. ¿Dónde las guardas para optimizar tu salida?",
-                    "code_snippet": "",
-                    "options": [
-                        "Donde caigan",
-                        "En un cajón cerrado",
-                        "En la entrada (Caché)"
-                    ],
-                    "correct_index": 2,
-                    "explanation": "Esto es 'Caché'. Guardar los datos de acceso frecuente en el lugar de lectura más rápida reduce la latencia diaria."
-                }
-            ]
-        },
-        {
-            "id": "lvl_08_algorithms",
-            "title": "ALGORITMOS",
-            "subtitle": "El Manual IKEA",
-            "difficulty": 3,
-            "icon_name": "construction",
-            "color_hex": "0xFFFFC107",
-            "description": "Un algoritmo es simplemente una serie de pasos precisos y finitos para resolver un problema. No es magia, es una receta.",
-            "analogy": "Un manual para armar un mueble es un algoritmo. Te da: Inputs (tornillos, tablas), Proceso (paso 1, paso 2) y Output (una mesa). Si el algoritmo es bueno, cualquiera que siga los pasos obtendrá el mismo resultado. Si es ambiguo ('ponga la tabla ahí'), el algoritmo falla.",
-            "challenges": [
-                {
-                    "question": "Manual: 'No apretar tornillos al 100% hasta el final'. Tú los aprietas al inicio. Resultado:",
-                    "code_snippet": "",
-                    "options": [
-                        "Mueble más fuerte",
-                        "Piezas no encajan (Error de Dependencia)",
-                        "Ahorras tiempo"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Gestión de dependencias. Los sistemas complejos necesitan holgura (tolerancia) durante la construcción para alinear todos los componentes antes del 'Commit' final."
-                },
-                {
-                    "question": "Manual: 'Repita el paso A para las 4 patas'. Esto es...",
-                    "code_snippet": "montar_pata();\nmontar_pata();\n...",
-                    "options": [
-                        "Pérdida de papel",
-                        "Reutilización de Función en Bucle",
-                        "Error de imprenta"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Definir un proceso una vez (Función: Cómo montar pata) y llamarlo varias veces es la base de la programación modular."
-                },
-                {
-                    "question": "Te falta un tornillo. El manual dice: 'Si falta A, use B'.",
-                    "code_snippet": "try {\n  usar_tornillo_A();\n} catch (Error) {\n  usar_tornillo_B();\n}",
-                    "options": [
-                        "Un hack peligroso",
-                        "Manejo de Errores (Fallback)",
-                        "Trampa"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Sistemas robustos tienen planes de contingencia (Fallbacks) para seguir funcionando incluso cuando falta un recurso esperado."
-                }
-            ]
-        },
-        {
-            "id": "lvl_09_concurrency",
-            "title": "CONCURRENCIA",
-            "subtitle": "La Cena Familiar",
-            "difficulty": 4,
-            "icon_name": "restaurant_menu",
             "color_hex": "0xFFE91E63",
-            "description": "La concurrencia trata de gestionar múltiples tareas que suceden al mismo tiempo o se solapan.",
-            "analogy": "Cocinar es el mejor ejemplo. Mientras el agua hierve (proceso pasivo), estás picando cebolla (proceso activo). No esperas mirando el agua 10 minutos antes de empezar a cortar. Aprovechas los tiempos de espera para avanzar otras tareas. Eso es paralelismo.",
+            "description": "A las computadoras se les da genial repetir tareas aburridas. Un bucle (loop) repite un bloque de código mientras una condición sea cierta o un número específico de veces.",
+            "analogy": "Picar una zanahoria. No das la orden 'picar' 50 veces por separado. La orden es: MIENTRAS quede zanahoria, seguir picando.",
             "challenges": [
                 {
-                    "question": "Pasta tarda 10 min. Salsa 5 min. ¿Cuándo empiezas la salsa para terminar JUNTOS?",
-                    "code_snippet": "iniciar_hilo(pasta, 10);\nesperar(5);\niniciar_hilo(salsa, 5);",
-                    "options": [
-                        "Al mismo tiempo",
-                        "5 minutos después de poner la pasta",
-                        "Cuando la pasta termine"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Sincronización de hilos. Inicias el proceso largo primero y calculas el retraso (delay) necesario para el proceso corto, logrando convergencia al final."
+                    "question": "Escribe la palabra clave del bucle que significa 'MIENTRAS' (que una condición se cumpla).",
+                    "code_snippet": "_____ (quedanZanahorias) {\n  picar();\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "while",
+                    "explanation": "El bucle 'while' evalúa la condición ANTES de cada iteración."
                 },
                 {
-                    "question": "Tú tienes el Cuchillo, esperas Pan. Tu hermano tiene Pan, espera Cuchillo. Nadie se mueve.",
-                    "code_snippet": "Thread A: tiene R1, espera R2\nThread B: tiene R2, espera R1",
-                    "options": [
-                        "Hacen sándwiches",
-                        "Bloqueo Mutuo (Deadlock)",
-                        "Comparten"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Deadlock. Dos procesos se bloquean eternamente porque cada uno tiene lo que el otro necesita y ninguno suelta su recurso."
+                    "question": "Sabes exactamente que quieres dar 5 vueltas a la pista. ¿Qué tipo de bucle es ideal cuando sabes el número exacto de repeticiones?",
+                    "code_snippet": "___ (int i = 0; i < 5; i++) {\n  correrVuelta();\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "for",
+                    "explanation": "El bucle 'for' es la herramienta estándar para iteraciones contadas."
                 },
                 {
-                    "question": "Metes el asado al horno. Mientras, pones la mesa. El horno es...",
-                    "code_snippet": "",
+                    "question": "En un bucle iterativo, ¿qué operador usas para INCLIMENTAR un contador en 1 paso rápidamente? (ej. i = i + 1)",
+                    "code_snippet": "vueltas__;",
                     "options": [
-                        "Primer Plano",
-                        "Segundo Plano (Background)",
-                        "Un error"
+                        "+1",
+                        "++",
+                        "+="
                     ],
                     "correct_index": 1,
-                    "explanation": "Procesamiento en segundo plano (Background). Una tarea que continúa ejecutándose sin bloquear al usuario principal."
-                }
-            ]
-        },
-        {
-            "id": "lvl_10_abstraction",
-            "title": "ABSTRACCIÓN",
-            "subtitle": "El Mapa del Metro",
-            "difficulty": 4,
-            "icon_name": "map",
-            "color_hex": "0xFF607D8B",
-            "description": "La abstracción consiste en ocultar los detalles complejos y mostrar solo lo relevante. Nos permite usar sistemas increíblemente complejos sin entender cómo funcionan por dentro.",
-            "analogy": "Conducir un coche. Para girar, mueves el volante. No necesitas saber cómo funciona la dirección asistida hidráulica, ni los engranajes de la cremallera. El volante es una 'Interfaz' que abstrae (oculta) la ingeniería mecánica compleja para que cualquiera pueda conducir.",
-            "challenges": [
-                {
-                    "question": "El mapa del metro muestra líneas rectas, no las curvas reales de los túneles. ¿Por qué?",
-                    "code_snippet": "",
-                    "options": [
-                        "Es más bonito",
-                        "Para confundir",
-                        "Abstracción: Solo importa la conexión, no la geografía"
-                    ],
-                    "correct_index": 2,
-                    "explanation": "Eliminar 'ruido' (datos innecesarios como curvas reales) permite al usuario centrarse en la información crítica (dónde hacer trasbordo)."
-                },
-                {
-                    "question": "Para conducir usas volante, no cables directos a las ruedas. El volante es...",
-                    "code_snippet": "interface Volante {\n  girar(grados);\n}",
-                    "options": [
-                        "Decoración",
-                        "Una Interfaz (UI)",
-                        "El motor"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "La Interfaz es la capa de abstracción que comunica al usuario con la lógica interna del sistema de forma simplificada."
-                },
-                {
-                    "question": "Ves un 'Coche'. Sabes que tiene puertas y ruedas, sea Ferrari o Ford. ¿Por qué?",
-                    "code_snippet": "class Coche {\n  Ruedas = 4;\n  Motor = true;\n}",
-                    "options": [
-                        "Eres adivino",
-                        "Reconoces la Clase 'Coche'",
-                        "Todos son iguales"
-                    ],
-                    "correct_index": 1,
-                    "explanation": "Programación Orientada a Objetos. Nuestro cerebro agrupa objetos en Clases basándose en atributos compartidos, ignorando las diferencias específicas."
+                    "explanation": "El operador '++' es un atajo sintáctico universal para incrementar una variable entera en una unidad."
                 }
             ]
         }

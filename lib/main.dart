@@ -11,8 +11,7 @@ import 'firebase_options.dart';
 import 'ui/viewmodels/auth_viewmodel.dart';
 import 'ui/views/login_screen.dart';
 import 'ui/viewmodels/level_viewmodel.dart';
-
-void main() async {
+ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
