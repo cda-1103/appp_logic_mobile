@@ -1,13 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; // <-- IMPORTANTE PARA DETECTAR LA WEB
 import '../../data/models/user_model.dart'; 
 
-
-//todas las operaciones que se van a realizar con la base de datos con respecto al usuario
+// Todas las operaciones que se van a realizar con la base de datos con respecto al usuario
 class AuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: kIsWeb 
+        ? '247737032867-29mp7591lqrbo6jjpoqifh7mh490nbhu.apps.googleusercontent.com' 
+        : null, 
+  );
 
   User? get currentUser => _auth.currentUser;
 
@@ -61,7 +67,11 @@ class AuthRepository {
   // 3. LOGOUT
   Future<void> signOut() async {
     await _auth.signOut();
-    await _googleSignIn.signOut();
+    if (kIsWeb) {
+      await _googleSignIn.signOut();
+    } else {
+      await _googleSignIn.signOut();
+    }
   }
 
   // 4. ACTUALIZAR PROGRESO CON EL XP REAL
@@ -70,8 +80,8 @@ class AuthRepository {
     String levelId,
     int score,
     int stars,
-    int correctAnswers, // <--- NUEVO: Cuántas acertó
-    int totalQuestions, // <--- NUEVO: De cuántas preguntas
+    int correctAnswers, 
+    int totalQuestions, 
   ) {
     final userRef = _firestore.collection('users').doc(uid);
 
@@ -88,7 +98,6 @@ class AuthRepository {
       final currentStreak = (stats['current_streak'] ?? 0) as int;
 
       // Para calcular accuracy necesitamos los históricos acumulados
-      // Si no existen, asumimos que es 0
       final historyCorrect = (stats['history_correct'] ?? 0) as int;
       final historyTotal = (stats['history_questions'] ?? 0) as int;
 
@@ -106,10 +115,8 @@ class AuthRepository {
       transaction.update(userRef, {
         'stats.total_score': currentTotalScore + score,
         'stats.solved_levels': currentSolved + 1,
-        'stats.current_streak':
-            currentStreak + 1, // Sumamos 1 racha por nivel pasado
-        'stats.accuracy': newAccuracy, // <--- ¡AQUÍ GUARDAMOS EL %!
-        // Guardamos estos dos ocultos para poder seguir calculando el promedio a futuro
+        'stats.current_streak': currentStreak + 1, 
+        'stats.accuracy': newAccuracy, 
         'stats.history_correct': newHistoryCorrect,
         'stats.history_questions': newHistoryTotal,
 
@@ -123,7 +130,7 @@ class AuthRepository {
     });
   }
 
-  // 5. OBTENERLA TABLA DE LOS 20 MEJORES
+  // 5. OBTENER LA TABLA DE LOS 20 MEJORES
   Future<List<UserModel>> getTopUsers() async {
     try {
       final snapshot = await _firestore
@@ -156,8 +163,7 @@ class AuthRepository {
     }
   }
 
-  // 7. Actualizar estatus de vida
-
+  // 7. ACTUALIZAR ESTATUS DE VIDA
   Future<void> updateLives(String uid, int newLives) async {
     try {
       await _firestore.collection('users').doc(uid).update({
@@ -168,56 +174,47 @@ class AuthRepository {
     }
   }
 
-  //8. Recuperar contraseña
-
+  // 8. RECUPERAR CONTRASEÑA
   Future<void> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
       print("Error al restablecer contraseña: $e");
+      rethrow; // Para que el ViewModel pueda atrapar y traducir el error
     }
   }
 
-  //9. Google Sign In
-
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-
+  // 9. GOOGLE SIGN IN //ios y web
   Future<UserModel?> signInWithGoogle() async {
     try {
-      // A. Iniciar flujo interactivo de Google
+      // A. Iniciar flujo interactivo de Google (Popup en Web, Modal en Móvil)
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null; // El usuario canceló
+      if (googleUser == null) return null; // El usuario canceló o cerró la ventana
 
       // B. Obtener credenciales (Tokens)
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
       // C. Iniciar sesión en Firebase
-      final UserCredential userCredential = await _auth.signInWithCredential(
-        credential,
-      );
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user != null) {
         // D. VERIFICAR SI YA EXISTE EN FIRESTORE
-        final userDoc = await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .get();
+        final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
         if (!userDoc.exists) {
-          // E. SI ES NUEVO: CREARLE EL DOCUMENTO CON DATOS POR DEFECTO
+          // SI EL USUARIO ES NUEVO: CREARLE EL DOCUMENTO CON DATOS POR DEFECTO
           final newUser = UserModel(
             uid: user.uid,
             email: user.email ?? '',
-            username: user.displayName ?? 'Agent', // Usamos su nombre de Google
-            firstName: user.displayName?.split(' ').first ?? 'Agent',
+            username: user.displayName ?? 'Agente', 
+            firstName: user.displayName?.split(' ').first ?? 'Agente',
             lastName: '',
-            dateOfBirth: DateTime.now(), // Dato desconocido por ahora al iniciar sesion con Google
+            dateOfBirth: DateTime.now(), // Dato desconocido por los momentos
             totalScore: 0,
             lives: 2,
             streak: 0,
@@ -225,19 +222,16 @@ class AuthRepository {
             accuracy: 0.0,
           );
 
-          await _firestore
-              .collection('users')
-              .doc(user.uid)
-              .set(newUser.toMap());
+          await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
           return newUser;
         } else {
-          // F. SI YA EXISTE: DEVOLVER SUS DATOS
+          //SI YA EXISTE: DEVOLVER SUS DATOS
           return UserModel.fromMap(userDoc.data()!, user.uid);
         }
       }
     } catch (e) {
       print("Error Google Sign In: $e");
-      throw Exception(e.toString());
+      throw Exception("Ocurrió un error con Google Sign-In: $e");
     }
     return null;
   }

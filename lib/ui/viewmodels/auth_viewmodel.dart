@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // NECESARIO PARA LEER LOS ERRORES
 import '../../data/models/user_model.dart';
 import '../../data/repositories/auth_repository.dart';
 
 class AuthViewModel extends ChangeNotifier {
-  // Instancia del repositorio (La llave maestra)
+  // Instancia del repositorio 
   final AuthRepository _authRepository = AuthRepository();
 
   UserModel? _currentUser;
@@ -15,9 +16,53 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // ---------------------------------------------------
-  // 🔄 RECARGAR USUARIO (Vital para actualizar XP y Niveles)
-  // ---------------------------------------------------
+
+  //TRADUCTOR DE ERRORES DE FIREBASE A ESPAÑOL
+
+  String _translateFirebaseError(dynamic e) {
+    // Si el error viene directamente de Firebase Auth
+    if (e is FirebaseAuthException) {
+      switch (e.code) {
+        case 'user-not-found':
+        case 'wrong-password':
+        case 'invalid-credential':
+          return 'Usuario o contraseña incorrectos. Verifica tus datos.';
+        case 'email-already-in-use':
+          return 'Este correo electrónico ya se encuentra registrado.';
+        case 'weak-password':
+          return 'La contraseña es muy débil. Debe tener al menos 6 caracteres.';
+        case 'invalid-email':
+          return 'El formato del correo electrónico no es válido.';
+        case 'user-disabled':
+          return 'Esta cuenta ha sido deshabilitada por un administrador.';
+        case 'too-many-requests':
+          return 'Demasiados intentos fallidos. Por seguridad, intenta más tarde.';
+        case 'network-request-failed':
+          return 'Error de conexión. Por favor revisa tu internet.';
+        case 'operation-not-allowed':
+          return 'Operación no permitida. Contacta a soporte.';
+        default:
+          return 'Ocurrió un error inesperado. Intenta de nuevo.';
+      }
+    } 
+    
+    // Si el repositorio encapsuló el error en un Exception (String general)
+    final errorStr = e.toString().toLowerCase();
+    if (errorStr.contains('invalid-credential') || errorStr.contains('wrong-password') || errorStr.contains('user-not-found')) {
+      return 'Usuario o contraseña incorrectos. Verifica tus datos.';
+    } else if (errorStr.contains('email-already-in-use')) {
+      return 'Este correo electrónico ya se encuentra registrado.';
+    } else if (errorStr.contains('network-request-failed')) {
+      return 'Error de conexión. Por favor revisa tu internet.';
+    }
+    
+    // Si es un error desconocido
+    return 'Error del sistema: ${e.toString()}';
+  }
+
+
+  // RECARGAR USUARIO (Vital para actualizar XP y Niveles)
+
   Future<void> reloadUser() async {
     if (_currentUser == null) return;
 
@@ -36,9 +81,9 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  // ---------------------------------------------------
-  // 🔐 INICIAR SESIÓN
-  // ---------------------------------------------------
+  
+  // INICIAR SESIÓN
+ 
   Future<bool> login(String email, String password) async {
     _setLoading(true);
     _errorMessage = null;
@@ -48,15 +93,16 @@ class AuthViewModel extends ChangeNotifier {
       _setLoading(false);
       return true;
     } catch (e) {
-      _errorMessage = e.toString(); // "Contraseña incorrecta", etc.
+      // ---> APLICAMOS EL TRADUCTOR DE ERRORES <---
+      _errorMessage = _translateFirebaseError(e); 
       _setLoading(false);
       return false;
     }
   }
 
-  // ---------------------------------------------------
-  // 📝 REGISTRARSE
-  // ---------------------------------------------------
+
+  // REGISTRARSE
+
   Future<bool> register(
     String email,
     String password,
@@ -78,7 +124,7 @@ class AuthViewModel extends ChangeNotifier {
         lastName: lastName,
         dateOfBirth: dateOfBirth,
         totalScore: 0,
-        lives: 2, // <--- MODO HARDCORE: Empiezan con 2 vidas
+        lives: 2, //
         solvedLevels: 0,
         streak: 0,
         accuracy: 0.0,
@@ -92,20 +138,21 @@ class AuthViewModel extends ChangeNotifier {
       );
 
       // Si todo sale bien, guardamos el usuario en memoria
-      // (Asumimos que el UID ya se generó en el proceso)
       final uid = _authRepository.currentUser?.uid ?? '';
       _currentUser = newUser.copyWith(uid: uid);
 
       _setLoading(false);
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      // ---> APLICAMOS EL TRADUCTOR DE ERRORES <---
+      _errorMessage = _translateFirebaseError(e);
       _setLoading(false);
       return false;
     }
   }
 
-  //cerrar sesion
+  // CERRAR SESIÓN
+
   void logout() {
     _authRepository.signOut();
     _currentUser = null;
@@ -118,6 +165,8 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // RECUPERAR CONTRASEÑA
+
   Future<bool> resetPassword(String email) async {
     _setLoading(true);
     _errorMessage = null;
@@ -127,13 +176,15 @@ class AuthViewModel extends ChangeNotifier {
       _setLoading(false);
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      // ---> APLICAMOS EL TRADUCTOR DE ERRORES <---
+      _errorMessage = _translateFirebaseError(e);
       _setLoading(false);
       return false;
     }
   }
 
   // LOGIN CON GOOGLE
+
   Future<bool> loginWithGoogle() async {
     _setLoading(true);
     _errorMessage = null;
@@ -150,7 +201,7 @@ class AuthViewModel extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = "Google Sign-In Failed: $e";
+      _errorMessage = "No se pudo iniciar sesión con Google. Intenta de nuevo.";
       _setLoading(false);
       return false;
     }

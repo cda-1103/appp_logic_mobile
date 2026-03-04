@@ -3,27 +3,27 @@
         {
             "id": "lvl_01_sequence",
             "title": "SECUENCIA LÓGICA",
-            "subtitle": "La Máquina de Café",
+            "subtitle": "El Paso a Paso",
             "difficulty": 1,
             "order_index": 0,
             "icon_name": "local_cafe",
             "color_hex": "0xFF795548",
-            "description": "En programación, el orden de ejecución es absoluto. El procesador lee las instrucciones línea por línea, de arriba a abajo. Alterar este orden cambia drásticamente el resultado final o rompe el programa.",
-            "analogy": "Imagina vestirte por la mañana. Tienes ropa interior y pantalones. El algoritmo para vestirse exige un orden estricto: primero la ropa interior, luego los pantalones. Si inviertes el orden, el resultado es funcionalmente incorrecto.",
+            "description": "Una computadora es una máquina muy obediente pero cero inteligente. Necesita que le des las instrucciones en el orden exacto. Si te saltas un paso o lo pones al revés, el programa falla.",
+            "analogy": "Piensa en ponerte los zapatos. El orden lógico es: 1. Poner el calcetín, 2. Poner el zapato, 3. Atar los cordones. Si intentas atar los cordones antes de ponerte el zapato, es un error de secuencia.",
             "challenges": [
                 {
-                    "question": "Quieres hacer café en una máquina eléctrica. ¿Cuál es el orden lógico físico obligatorio?",
+                    "question": "Quieres que un robot te prepare un café en la cafetera. ¿Cuál es el orden lógico correcto que debe seguir?",
                     "code_snippet": "",
                     "options": [
-                        "Encender -> Poner Agua -> Poner Café",
-                        "Poner Agua -> Poner Café -> Encender",
-                        "Encender -> Servir en taza -> Poner Agua"
+                        "Encender cafetera -> Poner agua -> Servir en taza",
+                        "Poner agua y café -> Encender cafetera -> Servir en taza",
+                        "Servir en taza -> Poner agua y café -> Encender cafetera"
                     ],
                     "correct_index": 1,
-                    "explanation": "La inicialización de recursos (agua y café) debe ocurrir antes de ejecutar el proceso principal (encender/calentar). De lo contrario, la máquina operaría en vacío."
+                    "explanation": "El robot no puede encender la máquina en vacío ni servir algo que no existe. Primero prepara los ingredientes, luego procesa y finalmente entrega el resultado."
                 },
                 {
-                    "question": "Tienes los pasos: A(Hervir agua), B(Servir en taza), C(Poner bolsita de té). ¿Cuál es el orden correcto?",
+                    "question": "Tienes los pasos: A(Comprar ingredientes), B(Comer la pizza), C(Hornear la pizza). ¿Cuál es el orden lógico para este algoritmo?",
                     "code_snippet": "",
                     "options": [
                         "A -> C -> B",
@@ -31,127 +31,210 @@
                         "B -> C -> A"
                     ],
                     "correct_index": 0,
-                    "explanation": "Dependencia lógica: No puedes servir (B) hasta que el té esté listo (C), y no puedes hacer té sin agua hirviendo (A)."
+                    "explanation": "Es un principio básico de causa y efecto. Necesitas los insumos (A) para poder procesarlos (C) antes de consumirlos (B)."
                 },
                 {
-                    "question": "Escribe la palabra clave (keyword) universal en programación para MOSTRAR o IMPRIMIR un mensaje en la pantalla.",
-                    "code_snippet": "____(\"¡El café está listo!\");",
+                    "question": "En la mayoría de los lenguajes, ¿cuál es la orden (palabra en inglés) que usamos para MOSTRAR un mensaje en la pantalla?",
+                    "code_snippet": "_____(\"Hola Mundo\");",
                     "options": [],
                     "correct_index": 0,
                     "expected_text": "print",
-                    "explanation": "La instrucción 'print' es la salida estándar más básica para mostrar información al usuario o hacer debug."
+                    "explanation": "La orden 'print' (imprimir) es la forma en la que la computadora se comunica con nosotros mostrándonos texto en la pantalla."
                 }
             ]
         },
         {
             "id": "lvl_02_variables",
             "title": "MEMORIA Y VARIABLES",
-            "subtitle": "Cajas Etiquetadas",
+            "subtitle": "Cajas de Mudanza",
             "difficulty": 1,
             "order_index": 1,
             "icon_name": "inventory_2",
             "color_hex": "0xFF2196F3",
-            "description": "Los programas necesitan recordar cosas. Una variable es como una caja en la memoria de la computadora donde guardamos un dato y le ponemos una etiqueta (nombre) para encontrarlo después.",
-            "analogy": "Imagina una mudanza. Tienes una caja marcada como 'Libros'. Dentro hay libros. La caja es la variable, 'Libros' es el nombre, y los libros reales son el valor (dato).",
+            "description": "Tu aplicación necesita recordar datos (como los puntos del jugador o su nombre). Para eso usamos 'variables', que son pequeños espacios en la memoria a los que les ponemos un nombre para no perderlos.",
+            "analogy": "Imagina una mudanza. Tienes una caja de cartón a la que le pegas una etiqueta que dice 'Juguetes'. La caja es la variable, la etiqueta es su nombre, y lo que metas dentro es su valor.",
             "challenges": [
                 {
-                    "question": "Quieres guardar la edad de un usuario (ej. 25). ¿Qué tipo de caja (variable) es la más adecuada?",
-                    "code_snippet": "_____ edad = 25;",
+                    "question": "Si necesitas guardar la edad de un usuario (por ejemplo: 25). ¿Qué tipo de dato es el correcto?",
+                    "code_snippet": "_____ edadUsuario = 25;",
                     "options": [
                         "Texto (String)",
                         "Número entero (int)",
                         "Verdadero/Falso (bool)"
                     ],
                     "correct_index": 1,
-                    "explanation": "La edad es un número entero sin decimales, por lo que el tipo 'int' (integer) es el correcto."
+                    "explanation": "La edad se mide en números exactos sin decimales, por lo tanto, el tipo entero (int) es el indicado."
                 },
                 {
-                    "question": "Escribe el tipo de dato que usarías para guardar un nombre como 'Claudio'.",
-                    "code_snippet": "______ nombre = 'Claudio';",
+                    "question": "Si quieres guardar el nombre de tu mascota ('Firulais'), debes usar un tipo de dato para Texto. Escribe cuál es:",
+                    "code_snippet": "______ mascota = \"Firulais\";",
                     "options": [],
                     "correct_index": 0,
                     "expected_text": "String",
-                    "explanation": "Un 'String' es una cadena de caracteres, es decir, texto. Siempre va entre comillas."
+                    "explanation": "La palabra 'String' significa 'cadena', refiriéndose a una cadena de letras o caracteres unidos para formar palabras."
                 },
                 {
-                    "question": "Declara una variable que NUNCA va a cambiar su valor (ej. el número Pi = 3.14). ¿Qué palabra clave usas al inicio?",
-                    "code_snippet": "_____ pi = 3.14;",
+                    "question": "¿Qué palabra usamos para crear una caja (variable) cuyo valor JAMÁS va a cambiar, como el número Pi (3.14)?",
+                    "code_snippet": "_____ numeroPi = 3.1416;",
                     "options": [],
                     "correct_index": 0,
                     "expected_text": "const",
-                    "explanation": "La palabra clave 'const' (o final) se usa para valores constantes en memoria que son inmutables tras su asignación."
+                    "explanation": "Usar 'const' (constante) protege tu variable para que nada ni nadie pueda modificarla por accidente mientras el programa corre."
                 }
             ]
         },
         {
             "id": "lvl_03_logic",
-            "title": "CONDICIONALES",
-            "subtitle": "Bifurcaciones",
+            "title": "CONDICIONALES (IF/ELSE)",
+            "subtitle": "El Portero del Club",
             "difficulty": 2,
             "order_index": 2,
             "icon_name": "call_split",
             "color_hex": "0xFFFF9800",
-            "description": "Los programas toman decisiones evaluando condiciones. Si la condición es verdadera (true), hacen una cosa. Si es falsa (false), pueden hacer otra.",
-            "analogy": "Es como llegar a un semáforo. SI (if) está en verde, avanzas. SINO (else), te detienes.",
+            "description": "Los programas no son líneas rectas; a veces deben tomar decisiones. Una condicional evalúa una pregunta: si la respuesta es verdadera hace una cosa, si es falsa hace otra.",
+            "analogy": "Es como el portero de una discoteca. SI (if) eres mayor de 18 años, te deja entrar. SI NO (else), te manda a casa.",
             "challenges": [
                 {
-                    "question": "Completa la estructura condicional básica. Si llueve, llevo paraguas.",
+                    "question": "Completa la estructura para decirle a la computadora: SI llueve, lleva el paraguas.",
                     "code_snippet": "___ (llueve == true) {\n  llevarParaguas();\n}",
                     "options": [],
                     "correct_index": 0,
                     "expected_text": "if",
-                    "explanation": "La instrucción 'if' evalúa la condición entre paréntesis."
+                    "explanation": "La palabra 'if' (Si, en inglés) es la puerta lógica principal que evalúa si una condición se está cumpliendo."
                 },
                 {
-                    "question": "¿Qué palabra se usa para indicar \"EN CASO CONTRARIO\" a la condición del IF?",
+                    "question": "¿Qué palabra usas para indicar lo que debe pasar EN CASO CONTRARIO (cuando la condición es falsa)?",
                     "code_snippet": "if (hambre == true) {\n  comer();\n} ____ {\n  seguirTrabajando();\n}",
                     "options": [],
                     "correct_index": 0,
                     "expected_text": "else",
-                    "explanation": "El 'else' es la ruta de escape o bifurcación por defecto cuando la condición del 'if' no se cumple."
+                    "explanation": "El 'else' (Si no) es tu plan de respaldo. Solo se ejecuta si la pregunta del 'if' resultó ser falsa."
                 },
                 {
-                    "question": "Tienes que ser mayor de 18 Y tener licencia para conducir. ¿Qué operador lógico usas para el 'Y' (AND)?",
-                    "code_snippet": "if (edad >= 18 __ tieneLicencia) {\n  conducir();\n}",
+                    "question": "El portero dice: 'Debes ser mayor a 18 años'. ¿Qué operador matemático usas para decir 'Mayor o igual a 18'?",
+                    "code_snippet": "if (edad ___ 18) {\n  entrarAlClub();\n}",
                     "options": [
-                        "|| (Dos barras)",
-                        "&& (Dos ampersands)",
-                        "== (Doble igual)"
+                        "==",
+                        ">=",
+                        "<="
                     ],
                     "correct_index": 1,
-                    "explanation": "El operador '&&' requiere que AMBAS condiciones sean verdaderas simultáneamente."
+                    "explanation": "El símbolo '>=' se lee como 'Mayor o igual'. Asegura que las personas con exactamente 18 años también puedan entrar."
                 }
             ]
         },
         {
-            "id": "lvl_04_loops",
+            "id": "lvl_04_boolean",
+            "title": "LÓGICA BOOLEANA",
+            "subtitle": "Verdadero o Falso",
+            "difficulty": 2,
+            "order_index": 3,
+            "icon_name": "rule",
+            "color_hex": "0xFF607D8B",
+            "description": "Las computadoras en el fondo solo entienden dos cosas: unos y ceros (Verdadero y Falso). La lógica booleana nos ayuda a combinar múltiples condiciones usando Y (AND), O (OR) y NO (NOT).",
+            "analogy": "Para ganar un premio necesitas la 'Llave Dorada' Y (AND) la 'Llave Plateada'. Si solo tienes una, pierdes. Así de estricta es la computadora.",
+            "challenges": [
+                {
+                    "question": "Quieres que el usuario inicie sesión solo si su correo es correcto Y su contraseña es correcta. ¿Qué símbolo une estas dos condiciones?",
+                    "code_snippet": "if (correoOk ___ claveOk) {\n  iniciarSesion();\n}",
+                    "options": [
+                        "&& (AND - Y)",
+                        "|| (OR - O)",
+                        "! (NOT - NO)"
+                    ],
+                    "correct_index": 0,
+                    "explanation": "El operador '&&' (AND) es estricto: obliga a que TODAS las condiciones juntas sean Verdaderas para poder avanzar."
+                },
+                {
+                    "question": "Tienes una promoción: Te damos descuento si traes un cupón O si es tu cumpleaños. Con que se cumpla UNA sola es suficiente. ¿Qué operador usas?",
+                    "code_snippet": "if (tieneCupon ___ esCumple) {\n  darDescuento();\n}",
+                    "options": [
+                        "&& (AND - Y)",
+                        "|| (OR - O)",
+                        "== (IGUAL)"
+                    ],
+                    "correct_index": 1,
+                    "explanation": "El operador '||' (OR) es flexible. Mientras haya al menos una condición Verdadera, dejará pasar la acción."
+                },
+                {
+                    "question": "Escribe el símbolo (un solo caracter) que usamos para NEGAR o INVERTIR un valor (Es decir, transformar Verdadero a Falso).",
+                    "code_snippet": "bool deDia = true;\nbool deNoche = _deDia;",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "!",
+                    "explanation": "El signo de exclamación '!' se lee como NOT. Ponerlo antes de una variable invierte su valor lógico por completo."
+                }
+            ]
+        },
+        {
+            "id": "lvl_05_switch",
+            "title": "MÚLTIPLES CAMINOS",
+            "subtitle": "El Menú de Opciones",
+            "difficulty": 2,
+            "order_index": 4,
+            "icon_name": "alt_route",
+            "color_hex": "0xFF009688",
+            "description": "Cuando tienes muchas opciones fijas (como un menú del 1 al 5), usar muchos IF/ELSE se vuelve sucio y difícil de leer. Para eso existe una estructura que salta directamente a la opción correcta.",
+            "analogy": "Como una operadora telefónica: 'Marque 1 para Ventas, 2 para Soporte, 3 para Reclamos'. La llamada se conecta directo (hace switch) al departamento elegido.",
+            "challenges": [
+                {
+                    "question": "Si tienes una variable con el número de un mes (1 al 12), ¿qué estructura es más elegante que escribir 12 'ifs' seguidos?",
+                    "code_snippet": "",
+                    "options": [
+                        "While / Loop",
+                        "Switch / Case",
+                        "Try / Catch"
+                    ],
+                    "correct_index": 1,
+                    "explanation": "La estructura 'Switch' evalúa un valor específico y salta directamente al 'Case' (caso) que coincide con ese valor, limpiando el código."
+                },
+                {
+                    "question": "Escribe la palabra en inglés que usamos dentro del Switch para evaluar cada escenario posible.",
+                    "code_snippet": "switch (opcion) {\n  ____ 1:\n    print('Seleccionaste uno');\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "case",
+                    "explanation": "La palabra 'case' (caso) define la puerta que se abrirá si el valor del Switch coincide con ella."
+                },
+                {
+                    "question": "Escribe la orden que usamos para ROMPER el ciclo de opciones, indicando que ya terminamos de ejecutar nuestra tarea.",
+                    "code_snippet": "case 1:\n  print('Fin');\n  _____;",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "break",
+                    "explanation": "Si no pones 'break', la computadora seguirá leyendo y ejecutando los demás casos debajo, lo cual casi siempre es un error."
+                }
+            ]
+        },
+        {
+            "id": "lvl_06_loops",
             "title": "CICLOS REPETITIVOS",
             "subtitle": "La Rueda del Hámster",
             "difficulty": 3,
-            "order_index": 3,
+            "order_index": 5,
             "icon_name": "loop",
             "color_hex": "0xFFE91E63",
-            "description": "A las computadoras se les da genial repetir tareas aburridas. Un bucle (loop) repite un bloque de código mientras una condición sea cierta o un número específico de veces.",
-            "analogy": "Picar una zanahoria. No das la orden 'picar' 50 veces por separado. La orden es: MIENTRAS quede zanahoria, seguir picando.",
+            "description": "Las computadoras nunca se cansan. Un 'Bucle' (Loop) es una instrucción que le dice a la máquina que repita el mismo código muchas veces, ya sea un número fijo de veces o mientras se cumpla una regla.",
+            "analogy": "Imagínate picando una zanahoria. No le dices a tu cerebro 'picar' 50 veces por separado. Tu orden mental es: MIENTRAS quede zanahoria, seguir picando.",
             "challenges": [
                 {
-                    "question": "Escribe la palabra clave del bucle que significa 'MIENTRAS' (que una condición se cumpla).",
-                    "code_snippet": "_____ (quedanZanahorias) {\n  picar();\n}",
-                    "options": [],
-                    "correct_index": 0,
-                    "expected_text": "while",
-                    "explanation": "El bucle 'while' evalúa la condición ANTES de cada iteración."
-                },
-                {
-                    "question": "Sabes exactamente que quieres dar 5 vueltas a la pista. ¿Qué tipo de bucle es ideal cuando sabes el número exacto de repeticiones?",
-                    "code_snippet": "___ (int i = 0; i < 5; i++) {\n  correrVuelta();\n}",
+                    "question": "Quieres que tu personaje camine 5 pasos exactos. ¿Cuál es el bucle ideal cuando sabes EXACTAMENTE cuántas repeticiones necesitas?",
+                    "code_snippet": "___ (int i = 0; i < 5; i++) {\n  caminar();\n}",
                     "options": [],
                     "correct_index": 0,
                     "expected_text": "for",
-                    "explanation": "El bucle 'for' es la herramienta estándar para iteraciones contadas."
+                    "explanation": "El bucle 'for' (Para) es el estándar cuando quieres llevar un conteo matemático estricto desde un inicio hasta un fin."
                 },
                 {
-                    "question": "En un bucle iterativo, ¿qué operador usas para INCLIMENTAR un contador en 1 paso rápidamente? (ej. i = i + 1)",
+                    "question": "Estás haciendo un juego. Quieres que el enemigo te siga atacando MIENTRAS tú sigas vivo. ¿Qué bucle usas?",
+                    "code_snippet": "_____ (jugadorVivo == true) {\n  atacar();\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "while",
+                    "explanation": "El bucle 'while' (Mientras) es perfecto para condiciones donde no sabes cuántas veces se repetirá, solo sabes que debe continuar hasta que la condición cambie."
+                },
+                {
+                    "question": "Al usar bucles necesitas llevar la cuenta (ejemplo: sumar 1 vuelta más). ¿Qué símbolo matemático usamos como atajo rápido para sumar +1 a una variable?",
                     "code_snippet": "vueltas__;",
                     "options": [
                         "+1",
@@ -159,7 +242,259 @@
                         "+="
                     ],
                     "correct_index": 1,
-                    "explanation": "El operador '++' es un atajo sintáctico universal para incrementar una variable entera en una unidad."
+                    "explanation": "El operador '++' significa 'Toma el valor actual y súmale exactamente 1'. Es el alma de los contadores en programación."
+                }
+            ]
+        },
+        {
+            "id": "lvl_07_functions",
+            "title": "FUNCIONES Y MÉTODOS",
+            "subtitle": "La Receta del Chef",
+            "difficulty": 2,
+            "order_index": 6,
+            "icon_name": "restaurant_menu",
+            "color_hex": "0xFF9C27B0",
+            "description": "Si escribes el mismo código 10 veces en lugares distintos, lo estás haciendo mal. Las funciones son bloques de código empaquetados bajo un nombre. Los escribes una vez, y los llamas cuantas veces quieras.",
+            "analogy": "Piensa en una receta de cocina. En lugar de explicarle paso a paso a cada ayudante cómo hacer la salsa de tomate, simplemente les dices la instrucción 'Ejecutar receta HacerSalsa()'.",
+            "challenges": [
+                {
+                    "question": "¿Cuál es la mayor ventaja de empaquetar tu código dentro de Funciones?",
+                    "code_snippet": "",
+                    "options": [
+                        "Hace que la aplicación gaste menos batería.",
+                        "Reutilizar el código para no escribir lo mismo muchas veces.",
+                        "Evita que los hackers puedan leer tus instrucciones."
+                    ],
+                    "correct_index": 1,
+                    "explanation": "Las funciones promueven el principio DRY ('No te repitas' en inglés), haciendo tu código más corto, limpio y fácil de corregir."
+                },
+                {
+                    "question": "Le envías dos números a una función para que los sume. ¿Qué palabra debes usar dentro de la función para que te DEVUELVA el resultado final?",
+                    "code_snippet": "int sumar(int a, int b) {\n  ______ a + b;\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "return",
+                    "explanation": "La orden 'return' escupe el resultado hacia afuera de la función y da por terminado su trabajo."
+                },
+                {
+                    "question": "Tienes una función ya creada que se llama 'saludar'. ¿Cómo escribes en el código para llamarla o ejecutarla?",
+                    "code_snippet": "_______();",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "saludar",
+                    "explanation": "Para ejecutar una función simplemente escribes su nombre exacto seguido de paréntesis (donde podrías enviar datos si la función los pidiera)."
+                }
+            ]
+        },
+        {
+            "id": "lvl_08_arrays",
+            "title": "ARREGLOS Y LISTAS",
+            "subtitle": "El Tren de Carga",
+            "difficulty": 2,
+            "order_index": 7,
+            "icon_name": "view_list",
+            "color_hex": "0xFF00BCD4",
+            "description": "A veces necesitas guardar 100 nombres. Crear 100 variables distintas sería una locura. Un Arreglo (o Lista) te permite agrupar muchos datos ordenados en una sola variable grande.",
+            "analogy": "Imagina un tren de carga. El tren entero es la Lista, y cada vagón tiene un número pegado por fuera. Para sacar algo, solo dices 'Saca lo que hay en el vagón número 2'.",
+            "challenges": [
+                {
+                    "question": "En casi todos los lenguajes de programación, ¿qué número tiene asignado el PRIMER elemento de una lista?",
+                    "code_snippet": "",
+                    "options": [
+                        "1",
+                        "0",
+                        "-1"
+                    ],
+                    "correct_index": 1,
+                    "explanation": "Las computadoras empiezan a contar desde el Cero. Así que el primer elemento es el 0, el segundo es el 1, etc. Esto se llama Índice Cero."
+                },
+                {
+                    "question": "Tienes una lista: invitados = ['Ana', 'Juan', 'Pedro']. ¿Qué número pides para que la computadora te entregue a 'Juan'?",
+                    "code_snippet": "print( invitados[___] );",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "1",
+                    "explanation": "Ana está en la posición 0, Juan está en la posición 1, y Pedro en la 2."
+                },
+                {
+                    "question": "¿Qué palabra usamos siempre en programación para preguntarle a una lista cuántos elementos tiene en total (su longitud)?",
+                    "code_snippet": "int cantidad = invitados.______;",
+                    "options": [
+                        "length",
+                        "howMany",
+                        "totalItems"
+                    ],
+                    "correct_index": 0,
+                    "explanation": "La propiedad 'length' (longitud o tamaño) devuelve el número total de ítems almacenados dentro de tu arreglo."
+                }
+            ]
+        },
+        {
+            "id": "lvl_09_strings",
+            "title": "TEXTOS Y CADENAS",
+            "subtitle": "Uniendo Palabras",
+            "difficulty": 2,
+            "order_index": 8,
+            "icon_name": "text_fields",
+            "color_hex": "0xFF3F51B5",
+            "description": "El texto en programación se llama 'String' (Cadena de caracteres). Manipular texto es vital: unir nombres con apellidos, extraer partes de un mensaje o pasar todo a mayúsculas.",
+            "analogy": "Piensa en el texto como un collar de perlas. Cada letra es una perla. Puedes cortar el collar por la mitad, unirlo con otro collar distinto, o pintar todas las perlas de otro color.",
+            "challenges": [
+                {
+                    "question": "¿Cómo se le llama en programación al proceso de unir dos pedazos de texto para formar uno solo (ej. unir 'Hola ' y 'Mundo')?",
+                    "code_snippet": "",
+                    "options": [
+                        "Multiplicación de texto",
+                        "Concatenación",
+                        "Incrustación"
+                    ],
+                    "correct_index": 1,
+                    "explanation": "Concatenar significa empalmar o unir secuencias de caracteres una detrás de otra para formar una sola frase."
+                },
+                {
+                    "question": "¿Qué símbolo matemático básico es el más usado en casi todos los lenguajes para concatenar (unir) dos variables de texto?",
+                    "code_snippet": "String saludo = \"Hola\" ___ \"Mundo\";",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "+",
+                    "explanation": "El símbolo de suma (+), cuando se usa entre textos, no hace cálculos, simplemente pega la segunda palabra al lado de la primera."
+                },
+                {
+                    "question": "Si necesitas extraer solo un pedacito de un texto (ejemplo: sacar las 3 primeras letras de una palabra), ¿qué herramienta usas?",
+                    "code_snippet": "String pedacito = palabra._________();",
+                    "options": [
+                        "substring()",
+                        "cutText()",
+                        "splitHalf()"
+                    ],
+                    "correct_index": 0,
+                    "explanation": "El método 'substring' te permite definir un punto de inicio y de corte para extraer exactamente la porción de texto que necesitas."
+                }
+            ]
+        },
+        {
+            "id": "lvl_10_error_handling",
+            "title": "MANEJO DE ERRORES",
+            "subtitle": "El Paracaídas de Emergencia",
+            "difficulty": 3,
+            "order_index": 9,
+            "icon_name": "health_and_safety",
+            "color_hex": "0xFFF44336",
+            "description": "Los programas a veces fallan porque el internet se cae o el usuario hace algo raro. Un buen programador anticipa esto y 'atrapa' el error antes de que la aplicación explote y se cierre de golpe.",
+            "analogy": "Imagínate saltando de un avión (el código normal). Si el motor falla, llevas un paracaídas de emergencia en tu espalda (el atrapa-errores). Si algo sale mal, el paracaídas se abre para aterrizar suavemente.",
+            "challenges": [
+                {
+                    "question": "Si intentas dividir un número entre cero en tu código y NO tienes manejo de errores preparado, ¿qué es lo peor que pasa?",
+                    "code_snippet": "",
+                    "options": [
+                        "La aplicación se detiene y se cierra de golpe (crashea).",
+                        "La computadora ignora la línea y sigue trabajando.",
+                        "Se muestra un aviso amarillo que el usuario cierra."
+                    ],
+                    "correct_index": 0,
+                    "explanation": "Una 'Excepción no controlada' hace que el procesador entre en pánico y cierre la app de forma abrupta, causando una pésima experiencia al usuario."
+                },
+                {
+                    "question": "Escribe la palabra en inglés del bloque donde ponemos el código 'peligroso' que vamos a INTENTAR ejecutar.",
+                    "code_snippet": "___ {\n  descargarArchivo();\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "try",
+                    "explanation": "El bloque 'try' (intentar) ejecuta las órdenes en estado de alerta, listo para avisar si algo estalla ahí dentro."
+                },
+                {
+                    "question": "Escribe la palabra del bloque que 'ATRAPA' el error si el intento anterior falla, para que podamos mostrar un mensaje amable.",
+                    "code_snippet": "_____ (error) {\n  print(\"Algo salió mal, revisa tu WiFi\");\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "catch",
+                    "explanation": "El bloque 'catch' (atrapar) actúa como red de seguridad. Solo se ejecuta si el bloque 'try' fracasó en su tarea."
+                }
+            ]
+        },
+        {
+            "id": "lvl_11_async",
+            "title": "ASINCRONISMO",
+            "subtitle": "El Pedido a Domicilio",
+            "difficulty": 3,
+            "order_index": 10,
+            "icon_name": "hourglass_empty",
+            "color_hex": "0xFFFF5722",
+            "description": "Hay tareas que demoran mucho (como buscar datos en internet). Si tu código se queda congelado esperando la respuesta, la pantalla del usuario no reaccionará. El Asincronismo permite que el código espere en segundo plano mientras tú sigues usando la app.",
+            "analogy": "Llamas a pedir una pizza. No te quedas paralizado mirando la puerta durante 30 minutos. Haces otras cosas (Asincronismo) y solo reaccionas cuando suena el timbre indicando que la pizza llegó.",
+            "challenges": [
+                {
+                    "question": "Pides unos datos de internet. ¿Cómo se le llama al objeto que te devuelve la app, que es como una caja vacía que 'promete' tener los datos en el futuro?",
+                    "code_snippet": "",
+                    "options": [
+                        "Future / Promesa",
+                        "Ghost / Fantasma",
+                        "Timer / Reloj"
+                    ],
+                    "correct_index": 0,
+                    "explanation": "Un 'Future' (o Promise en la web) representa un valor que todavía no está disponible, pero la computadora promete entregarlo apenas termine la descarga."
+                },
+                {
+                    "question": "Escribe la palabra clave que obliga a la computadora a 'ESPERAR' obligatoriamente a que termine de descargar algo antes de usarlo.",
+                    "code_snippet": "var foto = _____ descargarDeInternet();",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "await",
+                    "explanation": "La palabra 'await' (esperar) le dice al procesador: 'Pausa el trabajo en esta línea hasta que la información de internet llegue completa'."
+                },
+                {
+                    "question": "Si una de tus funciones va a tener tareas que demoran y usan pausas, ¿qué palabra clave debes poner en su título para que el sistema lo sepa?",
+                    "code_snippet": "void cargarPerfil() _____ {\n  //...\n}",
+                    "options": [],
+                    "correct_index": 0,
+                    "expected_text": "async",
+                    "explanation": "La marca 'async' (asíncrono) transforma una función normal en una función con capacidades de esperar en segundo plano."
+                }
+            ]
+        },
+        {
+            "id": "lvl_12_algorithms",
+            "title": "ALGORITMOS Y LÓGICA",
+            "subtitle": "Buscando en el Diccionario",
+            "difficulty": 3,
+            "order_index": 11,
+            "icon_name": "route",
+            "color_hex": "0xFF673AB7",
+            "description": "Un algoritmo es simplemente una receta paso a paso para resolver un problema. Hay algoritmos buenos y malos. Un programador exitoso crea algoritmos que resuelven los problemas usando la menor cantidad de pasos posibles.",
+            "analogy": "Para buscar la palabra 'Zapato' en un diccionario físico de 1000 páginas, no lees desde la página 1 a la 1000 (muy lento). Lo abres por la mitad y descartas la mitad izquierda al instante. Ese es un mejor algoritmo.",
+            "challenges": [
+                {
+                    "question": "Estás buscando el nombre 'Zack' en una lista alfabética de un millón de usuarios. ¿Qué técnica (algoritmo) es matemáticamente más rápida?",
+                    "code_snippet": "",
+                    "options": [
+                        "Búsqueda Lineal (Buscar uno por uno desde el principio).",
+                        "Búsqueda Binaria (Partir la lista a la mitad y descartar).",
+                        "Búsqueda Aleatoria (Escoger al azar hasta atinar)."
+                    ],
+                    "correct_index": 1,
+                    "explanation": "La Búsqueda Binaria es increíblemente rápida. En lugar de un millón de pasos, encontrar a 'Zack' tomará como máximo 20 pasos."
+                },
+                {
+                    "question": "Tu código funciona, pero está muy desordenado. ¿Cómo se llama al proceso de 'limpiar y organizar' tu código interno sin cambiar lo que hace por fuera?",
+                    "code_snippet": "",
+                    "options": [
+                        "Compilar",
+                        "Debugging (Depurar)",
+                        "Refactorizar (Refactoring)"
+                    ],
+                    "correct_index": 2,
+                    "explanation": "Refactorizar es como reordenar tu habitación. Sigue siendo la misma habitación con las mismas cosas, pero ahora está optimizada y es fácil encontrar todo."
+                },
+                {
+                    "question": "Creaste un algoritmo, pero la respuesta está dando mal. ¿Qué término en inglés usamos para el proceso de cazar y matar esos 'bichos' o errores de lógica?",
+                    "code_snippet": "",
+                    "options": [
+                        "Hacking",
+                        "Debugging",
+                        "Testing"
+                    ],
+                    "correct_index": 1,
+                    "explanation": "Hacer 'Debugging' (Depuración) es ejecutar tu programa paso por pasito usando una lupa, para descubrir en qué línea exacta te equivocaste."
                 }
             ]
         }

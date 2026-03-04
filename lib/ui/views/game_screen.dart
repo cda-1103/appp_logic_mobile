@@ -6,6 +6,33 @@ import '../viewmodels/auth_viewmodel.dart';
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
 
+  // ---> NUEVO METODO DE PARSEO VISUAL PARA CÓDIGO INLINE <---
+  // Convierte textos como "El valor de `x` es 5" a un RichText formateado
+  List<TextSpan> _parseInlineCode(String text, TextStyle baseStyle) {
+    final List<TextSpan> spans = [];
+    // Dividimos el texto usando la comilla invertida como separador
+    final parts = text.split('`');
+
+    for (int i = 0; i < parts.length; i++) {
+      if (i % 2 == 0) {
+        // Índice par: Texto normal
+        spans.add(TextSpan(text: parts[i], style: baseStyle));
+      } else {
+        // Índice impar: Texto que estaba entre comillas invertidas (Código)
+        spans.add(TextSpan(
+          text: parts[i],
+          style: baseStyle.copyWith(
+            fontFamily: 'Courier',
+            color: const Color(0xFF00FF00), // Verde neón para resaltar el código
+            backgroundColor: Colors.white.withOpacity(0.1), // Fonde tenue
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+      }
+    }
+    return spans;
+  }
+
   @override
   Widget build(BuildContext context) {
     final gameVM = Provider.of<GameViewModel>(context);
@@ -85,15 +112,21 @@ class GameScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    challenge.question,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 1.4,
+                  // ---> APLICAMOS EL PARSEO A LA PREGUNTA PRINCIPAL <---
+                  RichText(
+                    text: TextSpan(
+                      children: _parseInlineCode(
+                        challenge.question,
+                        const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          height: 1.4,
+                        ),
+                      ),
                     ),
                   ),
+                  
                   const SizedBox(height: 20),
                   if (challenge.codeSnippet != null &&
                       challenge.codeSnippet!.isNotEmpty) ...[
@@ -236,7 +269,6 @@ class GameScreen extends StatelessWidget {
                   // ------------------------------------------------------------------
                   if (!gameVM.isCorrect) ...[
                     const SizedBox(height: 20),
-                    // Si ya hay una pista cargada, la mostramos
                     if (gameVM.currentHint != null)
                       Container(
                         padding: const EdgeInsets.all(16),
@@ -263,7 +295,6 @@ class GameScreen extends StatelessWidget {
                           ],
                         ),
                       )
-                    // Si no hay pista y no está cargando, mostramos el botón para pedirla
                     else if (!gameVM.isLoadingHint)
                       SizedBox(
                         width: double.infinity,
@@ -280,7 +311,6 @@ class GameScreen extends StatelessWidget {
                           ),
                         ),
                       )
-                    // Si está cargando, mostramos el indicador
                     else
                       Center(
                         child: Padding(
@@ -433,12 +463,18 @@ class GameScreen extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
+              // ---> APLICAMOS EL PARSEO A LAS OPCIONES <---
+              child: RichText(
+                text: TextSpan(
+                  children: _parseInlineCode(
+                    text,
+                    const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
                 ),
               ),
             ),

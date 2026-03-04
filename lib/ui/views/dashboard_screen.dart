@@ -3,10 +3,9 @@ import 'package:provider/provider.dart';
 import '../../data/models/level_model.dart';
 import '../../data/repositories/level_repository.dart';
 import '../viewmodels/auth_viewmodel.dart';
-import '../viewmodels/game_viewmodel.dart'; // Añadido para poder jugar el reto IA
-import '../../core/services/ai_mentor_service.dart'; // Añadido para llamar a Gemini
+import '../viewmodels/game_viewmodel.dart';
+import '../../core/services/ai_mentor_service.dart';
 import 'level_intro_screen.dart';
-import 'game_screen.dart'; // Añadido para navegar al juego directamente
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -20,6 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   
   // --- VARIABLES PARA LA IA ---
   final TextEditingController _topicController = TextEditingController();
+  final TextEditingController _themeController = TextEditingController(); 
   final AiMentorService _aiService = AiMentorService();
 
   @override
@@ -32,6 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void dispose() {
     _topicController.dispose();
+    _themeController.dispose(); 
     super.dispose();
   }
 
@@ -39,91 +40,167 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ---> MÉTODOS DE INTELIGENCIA ARTIFICIAL <---
   // ----------------------------------------------------------------------
 
-  void _showAiGeneratorDialog(BuildContext context) {
+  // NOTA ARQUITECTÓNICA: Quitamos el parámetro 'context' para no hacer "Shadowing" 
+  // y usar el 'context' estable de la clase State.
+  void _showAiGeneratorDialog() {
+    String localDifficulty = 'Medio';
+    int localChallengesCount = 1;
+
     showDialog(
-      context: context,
+      context: context, // Usamos el context global de la pantalla
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF161B22),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Color(0xFF9C27B0)), // Morado IA
-          ),
-          title: Row(
-            children: const [
-              Icon(Icons.auto_awesome, color: Color(0xFF9C27B0)),
-              SizedBox(width: 8),
-              Text(
-                "FORJA TU RETO",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Courier',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+        return StatefulBuilder(
+          builder: (BuildContext statefulContext, StateSetter setStateDialog) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF161B22),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF9C27B0)), // Morado IA
+              ),
+              title: Row(
+                children: const [
+                  Icon(Icons.auto_awesome, color: Color(0xFF9C27B0)),
+                  SizedBox(width: 8),
+                  Text(
+                    "CREA TU NIVEL",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Courier',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "El Mentor IA creará teoría y preguntas a tu medida.",
+                      style: TextStyle(color: Colors.white70, fontSize: 13),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // 1. INPUT DEL TEMA DE PROGRAMACIÓN
+                    TextField(
+                      controller: _topicController,
+                      style: const TextStyle(color: Colors.white, fontFamily: 'Courier'),
+                      cursorColor: const Color(0xFF9C27B0),
+                      decoration: InputDecoration(
+                        labelText: "Tema (Ej. Variables, Bucles...)",
+                        labelStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.black26,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF9C27B0))),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // 1.5 INPUT DEL CONTEXTO/TEMÁTICA 
+                    TextField(
+                      controller: _themeController,
+                      style: const TextStyle(color: Colors.white, fontFamily: 'Courier'),
+                      cursorColor: const Color(0xFF00FF00), 
+                      decoration: InputDecoration(
+                        labelText: "Temática (Ej. Premier League, Tenis...)",
+                        labelStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.black26,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF00FF00))),
+                        prefixIcon: const Icon(Icons.theater_comedy, color: Colors.white38),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 2. DROPDOWN DE DIFICULTAD
+                    DropdownButtonFormField<String>(
+                      value: localDifficulty,
+                      dropdownColor: const Color(0xFF1F2937),
+                      style: const TextStyle(color: Colors.white, fontFamily: 'Courier'),
+                      decoration: InputDecoration(
+                        labelText: "Dificultad",
+                        labelStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.black26,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                      ),
+                      items: ['Fácil', 'Medio', 'Difícil'].map((String value) {
+                        return DropdownMenuItem<String>(value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setStateDialog(() => localDifficulty = newValue!);
+                      },
+                    ),
+                    const SizedBox(height: 12),
+
+                    // 3. DROPDOWN DE CANTIDAD DE RETOS
+                    DropdownButtonFormField<int>(
+                      value: localChallengesCount,
+                      dropdownColor: const Color(0xFF1F2937),
+                      style: const TextStyle(color: Colors.white, fontFamily: 'Courier'),
+                      decoration: InputDecoration(
+                        labelText: "Cantidad de Desafíos",
+                        labelStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.black26,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                      ),
+                      items: [1, 2, 3].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value, 
+                          child: Text("$value ${value == 1 ? 'Desafío' : 'Desafíos'}"),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setStateDialog(() => localChallengesCount = newValue!);
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Escribe el tema de programación que quieres practicar y el Mentor IA creará un desafío único para ti.",
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _topicController,
-                style: const TextStyle(color: Colors.white, fontFamily: 'Courier'),
-                cursorColor: const Color(0xFF9C27B0),
-                decoration: InputDecoration(
-                  hintText: "Ej. Bucles For, Variables...",
-                  hintStyle: const TextStyle(color: Colors.white38),
-                  filled: true,
-                  fillColor: Colors.black26,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFF9C27B0)),
-                  ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text("CANCELAR", style: TextStyle(color: Colors.white54)),
                 ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text("CANCELAR", style: TextStyle(color: Colors.white54)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF9C27B0),
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                final topic = _topicController.text.trim();
-                if (topic.isNotEmpty) {
-                  Navigator.pop(dialogContext); 
-                  _generateAndPlayLevel(context, topic); 
-                }
-              },
-              child: const Text("GENERAR", style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF9C27B0),
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    final topic = _topicController.text.trim();
+                    final theme = _themeController.text.trim().isEmpty 
+                        ? "Tecnología" 
+                        : _themeController.text.trim();
+
+                    if (topic.isNotEmpty) {
+                      Navigator.pop(dialogContext); // Cerramos el formulario
+                      // Llamamos a la función sin pasarle ningún context corrupto
+                      _generateAndPlayLevel(topic, theme, localDifficulty, localChallengesCount); 
+                    }
+                  },
+                  child: const Text("GENERAR NIVEL", style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Future<void> _generateAndPlayLevel(BuildContext context, String topic) async {
-    // 1. Mostrar diálogo de carga "Invocando al Mentor..."
+  // ---> FUNCIÓN BLINDADA CONTRA SPINNER INFINITO <---
+  Future<void> _generateAndPlayLevel(String topic, String theme, String difficulty, int challengesCount) async {
+    // 1. Mostrar diálogo de carga seguro
     showDialog(
-      context: context,
+      context: context, // Usamos el context global
       barrierDismissible: false,
-      builder: (_) => const AlertDialog(
+      builder: (BuildContext loadingDialogContext) => const AlertDialog(
         backgroundColor: Colors.transparent,
         elevation: 0,
         content: Center(
@@ -133,8 +210,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               CircularProgressIndicator(color: Color(0xFF9C27B0)),
               SizedBox(height: 16),
               Text(
-                "El Mentor está forjando el reto...",
+                "El Mentor IA está redactando la teoría...\n(Puede tardar hasta 15 segundos)",
                 style: TextStyle(color: Colors.white, fontFamily: 'Courier'),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -142,34 +220,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
 
-    // 2. Pedirle el reto a la IA
-    final reto = await _aiService.generateRandomChallenge(topic);
-
-    // 3. Quitar el diálogo de carga
-    if (!context.mounted) return;
-    Navigator.pop(context);
-
-    // 4. Evaluar resultado y navegar
-    if (reto != null) {
-      _topicController.clear(); // Limpiamos para el futuro
-      
-      // Cargamos el reto en el ViewModel general
-      final gameVM = Provider.of<GameViewModel>(context, listen: false);
-      gameVM.loadAiGeneratedLevel(reto);
-      
-      // Viajamos directo al juego
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const GameScreen()),
+    try {
+      // 2. Pedirle el nivel completo a la IA
+      final generatedLevel = await _aiService.generateAiLevel(
+        topic: topic,
+        contextTheme: theme,
+        difficulty: difficulty,
+        numChallenges: challengesCount,
       );
-    } else {
-      // Mostrar error de red
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("El Mentor no pudo forjar el reto. Intenta de nuevo.", style: TextStyle(fontFamily: 'Courier')),
-          backgroundColor: Colors.red,
-        ),
-      );
+
+      // 3. Quitar el diálogo de carga
+      if (!mounted) return; // 'mounted' es global al State
+      Navigator.of(context, rootNavigator: true).pop();
+
+      // 4. Evaluar resultado y navegar
+      if (generatedLevel != null && mounted) {
+        _topicController.clear(); 
+        _themeController.clear();
+        
+        final gameVM = Provider.of<GameViewModel>(context, listen: false);
+        gameVM.loadLevel(generatedLevel);
+        
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => LevelIntroScreen(level: generatedLevel)),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("El Mentor falló al generar el nivel. Revisa la consola.", style: TextStyle(fontFamily: 'Courier')),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      // 5. En caso de error, quitamos el loading y avisamos
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error interno: $e"), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -183,7 +274,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final user = authVM.currentUser;
     final int solvedLevels = user?.solvedLevels ?? 0;
 
-    // Colores del tema
     final neonGreen = const Color(0xFF00FF00);
 
     return Scaffold(
@@ -205,45 +295,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Column(
         children: [
-          // 1. EL ENCABEZADO DE USUARIO
           _buildUserHeader(user, neonGreen),
 
-          // 2. LA LISTA DE NIVELES (Dentro de Expanded para ocupar el resto)
           Expanded(
             child: FutureBuilder<List<LevelModel>>(
               future: _levelsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(color: neonGreen),
-                  );
+                  return Center(child: CircularProgressIndicator(color: neonGreen));
                 }
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      "ERROR: ${snapshot.error}",
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  );
+                  return Center(child: Text("ERROR: ${snapshot.error}", style: const TextStyle(color: Colors.red)));
                 }
 
                 final levels = snapshot.data ?? [];
                 levels.sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
 
                 if (levels.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      "NO DATA FOUND",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  );
+                  return const Center(child: Text("NO DATA FOUND", style: TextStyle(color: Colors.grey)));
                 }
 
                 return ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   itemCount: levels.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
@@ -257,20 +330,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      // --- NUEVO: BOTÓN FLOTANTE MÁGICO DE IA ---
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF9C27B0), // Morado IA
+        backgroundColor: const Color(0xFF9C27B0),
         icon: const Icon(Icons.auto_awesome, color: Colors.white),
         label: const Text(
-          "RETO IA",
-          style: TextStyle(
-            color: Colors.white, 
-            fontWeight: FontWeight.bold, 
-            fontFamily: 'Courier',
-            letterSpacing: 1.5,
-          ),
+          "CREAR NIVEL CON IA",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Courier', letterSpacing: 1),
         ),
-        onPressed: () => _showAiGeneratorDialog(context),
+        onPressed: () => _showAiGeneratorDialog(), // Ya no le pasamos el context
       ),
     );
   }
@@ -283,41 +350,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       child: Row(
         children: [
-          // A. Avatar
           CircleAvatar(
             radius: 24,
             backgroundColor: const Color(0xFF1F2937),
             child: Icon(Icons.person, color: neonGreen, size: 28),
           ),
           const SizedBox(width: 12),
-
-          // B. Nombre y Rango
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   user.rankTitle ?? "Aprendiz Junior",
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 12,
-                    fontFamily: 'Courier',
-                  ),
+                  style: TextStyle(color: Colors.grey[400], fontSize: 12, fontFamily: 'Courier'),
                 ),
                 Text(
                   user.username.toUpperCase(),
-                  style: TextStyle(
-                    color: neonGreen,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    fontFamily: 'Courier',
-                  ),
+                  style: TextStyle(color: neonGreen, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Courier'),
                 ),
               ],
             ),
           ),
-
-          // C. Píldora de XP
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -331,11 +384,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 4),
                 Text(
                   "${user.totalScore} XP",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Courier',
-                  ),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Courier'),
                 ),
               ],
             ),
@@ -346,34 +395,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // --- WIDGET TARJETA DE NIVEL ---
-  Widget _buildLevelCard(
-    BuildContext context,
-    LevelModel level,
-    bool isLocked,
-  ) {
+  Widget _buildLevelCard(BuildContext context, LevelModel level, bool isLocked) {
     final baseColor = isLocked ? Colors.grey : level.color;
     final icon = isLocked ? Icons.lock : level.icon;
     final opacity = isLocked ? 0.5 : 1.0;
 
     return GestureDetector(
       onTap: isLocked
-          ? () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    "Nivel bloqueado. Completa el anterior primero.",
-                  ),
-                ),
-              );
-            }
-          : () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LevelIntroScreen(level: level),
-                ),
-              );
-            },
+          ? () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Nivel bloqueado. Completa el anterior primero.")))
+          : () => Navigator.push(context, MaterialPageRoute(builder: (context) => LevelIntroScreen(level: level))),
       child: Opacity(
         opacity: opacity,
         child: Container(
@@ -382,9 +412,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: const Color(0xFF161B22),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isLocked
-                  ? Colors.grey.withOpacity(0.3)
-                  : baseColor.withOpacity(0.5),
+              color: isLocked ? Colors.grey.withOpacity(0.3) : baseColor.withOpacity(0.5),
               width: 1,
             ),
           ),
@@ -392,10 +420,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: baseColor.withOpacity(0.1),
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: baseColor.withOpacity(0.1)),
                 child: Icon(icon, color: baseColor, size: 24),
               ),
               const SizedBox(width: 16),
@@ -405,27 +430,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Text(
                       isLocked ? "NIVEL BLOQUEADO" : level.title.toUpperCase(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFamily: isLocked ? null : 'Courier',
-                      ),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: isLocked ? null : 'Courier'),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      level.subtitle,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
+                    Text(level.subtitle, style: const TextStyle(color: Colors.grey, fontSize: 12)),
                   ],
                 ),
               ),
-              if (!isLocked)
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white,
-                  size: 16,
-                ),
+              if (!isLocked) const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
             ],
           ),
         ),
