@@ -11,7 +11,7 @@ class AuthRepository {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: kIsWeb 
-        ? '247737032867-29mp7591lqrbo6jjpoqifh7mh490nbhu.apps.googleusercontent.com' 
+        ? '247737032867-sscao453eefq1ftv67b3kq9ng0b32oa8.apps.googleusercontent.com' 
         : null, 
   );
 
